@@ -23,7 +23,7 @@
     <artifactId>hapi-pheno-client</artifactId>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>11</java.version>
         <spring_boot_version>2.3.4.RELEASE</spring_boot_version>
         <hapi.version>5.6.2</hapi.version>
     </properties>
@@ -64,6 +64,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <version>2.6.2</version>
         </dependency>
 
 

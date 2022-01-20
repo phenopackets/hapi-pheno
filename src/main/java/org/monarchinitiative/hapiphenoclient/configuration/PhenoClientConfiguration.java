@@ -4,10 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.file.Path;
+
 
 @Configuration
 public class PhenoClientConfiguration {
@@ -27,6 +25,12 @@ public class PhenoClientConfiguration {
     public String getHapiUrl() {
         return applicationProperties.getHapiServerUrl();
     }
+
+    @Bean("igPath")
+    public Path igPath() {
+        return Path.of(applicationProperties.igPath());
+    }
+
 
 
 }
