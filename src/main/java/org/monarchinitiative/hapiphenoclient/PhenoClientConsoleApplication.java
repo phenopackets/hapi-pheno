@@ -33,6 +33,7 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
             LOG.info("args[{}]: {}", i, args[i]);
         }
         System.out.println(client.getUrl());
-        client.connect();
+        //client.connect();
+        client.searchForPhenopackets();
     }
 }
