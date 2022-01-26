@@ -1,7 +1,8 @@
 package org.monarchinitiative.hapiphenoclient;
 
+import org.hl7.fhir.instance.model.api.IIdType;
 import org.monarchinitiative.hapiphenoclient.analysis.PhenoClient;
-import org.monarchinitiative.hapiphenoclient.configuration.PhenoClientConfiguration;
+import org.monarchinitiative.hapiphenoclient.analysis.SimpleHandShake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
     @Autowired
     PhenoClient client;
 
+    @Autowired
+    SimpleHandShake simpleHandShake;
+
     public static void main(String[] args) {
         LOG.info("STARTING THE APPLICATION");
         SpringApplication.run(PhenoClientConsoleApplication.class, args);
@@ -34,6 +38,8 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
         }
         System.out.println(client.getUrl());
         //client.connect();
-        client.searchForPhenopackets();
+        //client.searchForPhenopackets();
+        IIdType id = simpleHandShake.createPatient();
+        simpleHandShake.searchForPatient(id);
     }
 }
