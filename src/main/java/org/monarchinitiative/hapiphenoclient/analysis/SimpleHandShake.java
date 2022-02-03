@@ -70,10 +70,22 @@ public class SimpleHandShake {
 
 
     public void searchForPatient(IIdType id) {
-        IGenericClient  client = ctx . newRestfulGenericClient(this.hapiUrl);
+        IGenericClient  client = ctx .newRestfulGenericClient(this.hapiUrl);
         Bundle response = client.search()
                 .forResource(Patient.class)
                 .where(Patient.NAME.matches().value("Simpson"))
+                .returnBundle(Bundle.class)
+                .execute();
+
+        System.out.println("Responses: " + response.getTotal());
+        System.out.println("First response ID: " + response .getEntry().get(0).getResource().getId());
+    }
+
+
+    public void searchForAnything() {
+        IGenericClient  client = ctx .newRestfulGenericClient(this.hapiUrl);
+        Bundle response = client.search()
+                .forResource(Patient.class)
                 .returnBundle(Bundle.class)
                 .execute();
 

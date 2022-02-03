@@ -64,15 +64,5 @@ public class PhenotypicFeature extends Observation {
     }
 
 
-//    /**
-//     * Each extension is defined in a field. Any valid HAPI Data Type
-//     * can be used for the field type. Note that the [name=""] attribute
-//     * in the @Child annotation needs to match the name for the bean accessor
-//     * and mutator methods.
-//     */
-//    @Child(name="petName")
-//    @Extension(url="http://example.com/dontuse#petname", definedLocally=false, isModifier=false)
-//    @Description(shortDefinition="The name of the patient's favourite pet")
-//    private StringType myPetName;
 
 }
