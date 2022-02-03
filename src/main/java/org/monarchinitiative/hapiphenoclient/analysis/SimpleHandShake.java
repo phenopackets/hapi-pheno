@@ -47,8 +47,8 @@ public class SimpleHandShake {
         parser.setPrettyPrint(true);
         System.out.println(parser.encodeResourceToString(pat));
         // Now post resource to server
-
-        IGenericClient client = ctx.newRestfulGenericClient(hapiUrl);
+        String myUrl = "http://localhost:8888/fhir/";
+        IGenericClient client = ctx.newRestfulGenericClient(myUrl);
         try {
             MethodOutcome outcome = client
                     .create()

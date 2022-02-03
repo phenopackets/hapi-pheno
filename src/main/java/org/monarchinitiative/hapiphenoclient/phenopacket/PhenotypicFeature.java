@@ -7,6 +7,8 @@ import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.context.annotation.Profile;
 
+import java.util.List;
+
 
 /**
  * The PhenotypicFeature constrains Observation as follows
@@ -32,7 +34,7 @@ public class PhenotypicFeature extends Observation {
     private final static String valueCodeLoincPresent = "LA9633-4";
     private final static String valueDisplayPresent = "Present";
     private final static String valueCodeLoincAbsent = "LA9634-2";
-    private final static String valueDisplayAbsent = "Abset";
+    private final static String valueDisplayAbsent = "Absent";
 
 
     public static PhenotypicFeature createObservation(String hpoCode, String hpoLabel, String patId) {
@@ -62,7 +64,6 @@ public class PhenotypicFeature extends Observation {
                                 .setCode(valueCodeLoincAbsent)
                                 .setDisplay(valueDisplayAbsent)));
     }
-
 
 
 }

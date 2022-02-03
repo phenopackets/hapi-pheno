@@ -39,8 +39,8 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
         System.out.println(client.getUrl());
         //client.connect();
         //client.searchForPhenopackets();
-       // IIdType id = simpleHandShake.createPatient();
+        IIdType id = simpleHandShake.createPatient();
         //simpleHandShake.searchForPatient(id);
-        simpleHandShake.searchForAnything();
+        //simpleHandShake.searchForAnything();
     }
 }
