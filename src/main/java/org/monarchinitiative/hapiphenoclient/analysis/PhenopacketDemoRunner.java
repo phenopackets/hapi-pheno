@@ -1,6 +1,7 @@
 package org.monarchinitiative.hapiphenoclient.analysis;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -20,15 +21,19 @@ import org.springframework.stereotype.Component;
  * as a sanity check
  */
 @Component
-public class SimpleHandShake {
-    private final static Logger LOG = LoggerFactory.getLogger(SimpleHandShake.class);
+public class PhenopacketDemoRunner {
+    private final static Logger LOG = LoggerFactory.getLogger(PhenopacketDemoRunner.class);
     @Autowired
     private String hapiUrl;
 
     private final FhirContext ctx;
 
-    public SimpleHandShake() {
+    public PhenopacketDemoRunner() {
         ctx = FhirContext.forR4();
+        String propFile = "classpath:narrative.properties";
+        CustomThymeleafNarrativeGenerator gen = new CustomThymeleafNarrativeGenerator(propFile);
+
+        ctx.setNarrativeGenerator(gen);
     }
 
     public IIdType createPatient() {
