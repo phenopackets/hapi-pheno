@@ -2,7 +2,8 @@ package org.monarchinitiative.hapiphenoclient;
 
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.monarchinitiative.hapiphenoclient.analysis.PhenoClient;
-import org.monarchinitiative.hapiphenoclient.analysis.SimpleHandShake;
+import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
     PhenoClient client;
 
     @Autowired
-    SimpleHandShake simpleHandShake;
+    PhenopacketDemoRunner demoRunner;
 
     public static void main(String[] args) {
         LOG.info("STARTING THE APPLICATION");
@@ -39,8 +40,13 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
         System.out.println(client.getUrl());
         //client.connect();
         //client.searchForPhenopackets();
-        IIdType id = simpleHandShake.createPatient();
+        IIdType id = demoRunner.createPatient();
         //simpleHandShake.searchForPatient(id);
         //simpleHandShake.searchForAnything();
+        Measurement m = demoRunner.createMeasurement();
+        //IIdType m_id = demoRunner.postMeasurementToServer(m);
+        //System.out.println(m_id);
+        //demoRunner.postPf();
+
     }
 }

@@ -5,16 +5,20 @@ import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IIdType;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.ContactPoint;
-import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Observation.ObservationStatus;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
+import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.Calendar;
 
 /**
  * This class is intended to just do two simple operations with a FHIR server
@@ -28,12 +32,15 @@ public class PhenopacketDemoRunner {
 
     private final FhirContext ctx;
 
+    private final LoggingInterceptor loggingInterceptor;
+
     public PhenopacketDemoRunner() {
         ctx = FhirContext.forR4();
         String propFile = "classpath:narrative.properties";
         CustomThymeleafNarrativeGenerator gen = new CustomThymeleafNarrativeGenerator(propFile);
 
         ctx.setNarrativeGenerator(gen);
+       loggingInterceptor = new LoggingInterceptor(true);
     }
 
     public IIdType createPatient() {
@@ -96,5 +103,51 @@ public class PhenopacketDemoRunner {
 
         System.out.println("Responses: " + response.getTotal());
         System.out.println("First response ID: " + response .getEntry().get(0).getResource().getId());
+    }
+
+
+    public Measurement createMeasurement() {
+        Measurement obs = new Measurement();
+
+            obs.setId("obs-example-age-weight-"+Integer.toString(2022)+"-"+Integer.toString(3));
+            obs.setSubject(new Reference().setReference("Patient/123"));
+            obs.setStatus(ObservationStatus.FINAL);
+            Calendar when = Calendar.getInstance();
+            when.add(Calendar.YEAR, 2022);
+            when.add(Calendar.MONTH, 3);
+            obs.setEffective(new DateTimeType(when));
+            obs.getCode().addCoding().setCode("29463-7").setSystem("http://loinc.org");
+            obs.setValue(new Quantity());
+            obs.getValueQuantity().setCode("kg");
+            obs.getValueQuantity().setSystem("http://unitsofmeasure.org");
+            obs.getValueQuantity().setUnit("kg");
+            obs.getValueQuantity().setValue(new BigDecimal(23));
+            return obs;
+
+    }
+
+    public IIdType postMeasurementToServer(Measurement m) {
+        IGenericClient  client = ctx .newRestfulGenericClient(this.hapiUrl);
+        client.registerInterceptor(loggingInterceptor);
+        MethodOutcome
+                outcome = client
+                .create()
+                .resource( m)
+                .execute();
+        return outcome.getId();
+    }
+
+
+    public IIdType postPf() {
+        PhenotypicFeature pf = new PhenotypicFeature();
+        pf.setId("id");
+        IGenericClient  client = ctx .newRestfulGenericClient(this.hapiUrl);
+        client.registerInterceptor(loggingInterceptor);
+        MethodOutcome
+                outcome = client
+                .create()
+                .resource(pf)
+                .execute();
+        return outcome.getId();
     }
 }
