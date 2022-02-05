@@ -24,7 +24,7 @@ import java.util.List;
  * * component ^short = "GA4GH severity and modifiers should be coded as CodeableConcepts in the code field of the component"
  * * component.value[x] only boolean
  */
-@ResourceDef(name="Observation",
+@ResourceDef(
         profile="https://github.com/phenopackets/core-ig/StructureDefinition/PhenotypicFeature")
 public class PhenotypicFeature extends Observation {
     private static final long serialVersionUID = 1L;

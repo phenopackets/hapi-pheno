@@ -28,6 +28,7 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
         LOG.info("STARTING THE APPLICATION");
         SpringApplication.run(PhenoClientConsoleApplication.class, args);
         LOG.info("APPLICATION FINISHED");
+        System.exit(0);
     }
 
     @Override
@@ -40,13 +41,15 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
         System.out.println(client.getUrl());
         //client.connect();
         //client.searchForPhenopackets();
-        IIdType id = demoRunner.createPatient();
-        //simpleHandShake.searchForPatient(id);
-        //simpleHandShake.searchForAnything();
-        Measurement m = demoRunner.createMeasurement();
+//        IIdType id = demoRunner.createPatient();
+//        //simpleHandShake.searchForPatient(id);
+//        //simpleHandShake.searchForAnything();
+//        Measurement m = demoRunner.createMeasurement();
         //IIdType m_id = demoRunner.postMeasurementToServer(m);
         //System.out.println(m_id);
         //demoRunner.postPf();
+
+        demoRunner.postBethlemClinicalExample();
 
     }
 }
