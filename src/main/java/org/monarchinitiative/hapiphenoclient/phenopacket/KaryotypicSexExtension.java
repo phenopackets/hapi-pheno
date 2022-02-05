@@ -1,5 +1,6 @@
 package org.monarchinitiative.hapiphenoclient.phenopacket;
 
+import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import ca.uhn.fhir.util.ElementUtil;
 import org.hl7.fhir.r4.model.CodeableConcept;
@@ -31,6 +32,9 @@ public class KaryotypicSexExtension extends Extension {
         return super.isEmpty() && ElementUtil.isEmpty(karyotype);
     }
 
+    public IResource KaryotypicSexExtension(){
+        return (IResource) new KaryotypicSexExtension(karyotype);
+    }
 
 
 

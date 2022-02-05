@@ -13,6 +13,7 @@ import org.hl7.fhir.r4.model.Observation.ObservationStatus;
 import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
+import org.monarchinitiative.hapiphenoclient.phenopacket.KaryotypicSexExtension;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 import org.slf4j.Logger;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * This class is intended to just do two simple operations with a FHIR server
@@ -160,21 +163,26 @@ public class PhenopacketDemoRunner {
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
         System.out.println(parser.encodeResourceToString(individual));
+
+        Patient individual2 = new Patient();
+        individual2.setId("id.1");
+        individual2.setGender(Enumerations.AdministrativeGender.MALE);
+        Date birthdate = new GregorianCalendar(2007, Calendar.FEBRUARY, 11).getTime();
+        individual2.setBirthDate(birthdate);
         IGenericClient  client = ctx .newRestfulGenericClient(this.hapiUrl);
         client.registerInterceptor(loggingInterceptor);
         try {
             MethodOutcome outcome = client
                     .create()
-                    .resource(individual)
+                    .resource(individual2)
                     .execute();
             System.out.println(outcome .getId());
             return outcome.getId();
         } catch (ResourceNotFoundException e) {
             //404 means we can contact the server but the server does not have
             // the resource we want or does not want to disclose the information
-            int code = e.getStatusCode();
-            String msg = String.format("Could not create patient. HTTP Status code: %d: %s\n",
-                    code, e.getMessage());
+            //int code = e.getStatusCode();
+            String msg = String.format("Could not create individal: %s\n", e.getMessage());
             throw new PhenoClientRuntimeException(msg);
         }
     }
