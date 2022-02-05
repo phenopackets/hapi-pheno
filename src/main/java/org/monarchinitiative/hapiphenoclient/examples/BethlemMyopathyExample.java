@@ -5,7 +5,6 @@ import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
 import org.monarchinitiative.hapiphenoclient.phenopacket.KaryotypicSexExtension;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;

@@ -1,20 +1,16 @@
 package org.monarchinitiative.hapiphenoclient.phenopacket;
 
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.api.annotation.Child;
-import ca.uhn.fhir.model.api.annotation.Description;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import ca.uhn.fhir.util.ElementUtil;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Enumeration;
 import org.hl7.fhir.r4.model.Extension;
 
 @ResourceDef(name="Extension",
         profile="https://github.com/phenopackets/core-ig/StructureDefinition/KaryotypicSex")
 public class KaryotypicSexExtension extends Extension {
 
-    private Karyotype karyotype;
+    private final Karyotype karyotype;
 
     //"https://github.com/phenopackets/core-ig/CodeSystem/KaryotypicSex",
 

@@ -1,10 +1,6 @@
 package org.monarchinitiative.hapiphenoclient.examples;
 
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Create an examples to demonstrate how to

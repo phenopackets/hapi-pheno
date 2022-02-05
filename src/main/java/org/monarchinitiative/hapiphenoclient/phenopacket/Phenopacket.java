@@ -1,13 +1,8 @@
 package org.monarchinitiative.hapiphenoclient.phenopacket;
 
-import ca.uhn.fhir.model.api.annotation.Child;
-import ca.uhn.fhir.model.api.annotation.Description;
-import ca.uhn.fhir.model.api.annotation.Extension;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import org.hl7.fhir.r4.model.Composition;
-import org.hl7.fhir.r4.model.Enumeration;
 import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.StringType;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
 
 import java.util.List;

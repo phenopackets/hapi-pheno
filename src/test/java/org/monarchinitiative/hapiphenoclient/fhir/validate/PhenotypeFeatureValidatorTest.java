@@ -1,12 +1,9 @@
 package org.monarchinitiative.hapiphenoclient.fhir.validate;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.gclient.IValidate;
-import ca.uhn.fhir.rest.gclient.IValidateUntyped;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
 import org.hl7.fhir.r4.model.Observation;

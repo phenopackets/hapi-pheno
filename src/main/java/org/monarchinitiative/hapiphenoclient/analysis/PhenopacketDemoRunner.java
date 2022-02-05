@@ -157,6 +157,9 @@ public class PhenopacketDemoRunner {
 
     public IIdType postIndividual(Individual individual) {
         LOG.info("Posting individual={}", individual);
+        IParser parser = ctx.newJsonParser();
+        parser.setPrettyPrint(true);
+        System.out.println(parser.encodeResourceToString(individual));
         IGenericClient  client = ctx .newRestfulGenericClient(this.hapiUrl);
         client.registerInterceptor(loggingInterceptor);
         try {
