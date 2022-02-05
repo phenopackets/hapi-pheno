@@ -10,6 +10,10 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.Observation.ObservationStatus;
+import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
+import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
+import org.monarchinitiative.hapiphenoclient.phenopacket.KaryotypicSexExtension;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 import org.slf4j.Logger;
@@ -19,6 +23,8 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * This class is intended to just do two simple operations with a FHIR server
@@ -109,7 +115,7 @@ public class PhenopacketDemoRunner {
     public Measurement createMeasurement() {
         Measurement obs = new Measurement();
 
-            obs.setId("obs-example-age-weight-"+Integer.toString(2022)+"-"+Integer.toString(3));
+            obs.setId("obs-example-age-weight-"+ 2022 +"-"+3);
             obs.setSubject(new Reference().setReference("Patient/123"));
             obs.setStatus(ObservationStatus.FINAL);
             Calendar when = Calendar.getInstance();
@@ -150,4 +156,44 @@ public class PhenopacketDemoRunner {
                 .execute();
         return outcome.getId();
     }
+
+
+    public IIdType postIndividual(Individual individual) {
+        LOG.info("Posting individual={}", individual);
+        IParser parser = ctx.newJsonParser();
+        parser.setPrettyPrint(true);
+        System.out.println(parser.encodeResourceToString(individual));
+
+        Patient individual2 = new Patient();
+        individual2.setId("id.1");
+        individual2.setGender(Enumerations.AdministrativeGender.MALE);
+        Date birthdate = new GregorianCalendar(2007, Calendar.FEBRUARY, 11).getTime();
+        individual2.setBirthDate(birthdate);
+        IGenericClient  client = ctx .newRestfulGenericClient(this.hapiUrl);
+        client.registerInterceptor(loggingInterceptor);
+        try {
+            MethodOutcome outcome = client
+                    .create()
+                    .resource(individual2)
+                    .execute();
+            System.out.println(outcome .getId());
+            return outcome.getId();
+        } catch (ResourceNotFoundException e) {
+            //404 means we can contact the server but the server does not have
+            // the resource we want or does not want to disclose the information
+            //int code = e.getStatusCode();
+            String msg = String.format("Could not create individal: %s\n", e.getMessage());
+            throw new PhenoClientRuntimeException(msg);
+        }
+    }
+
+
+    public IIdType postBethlemClinicalExample() {
+        BethlemMyopathyExample bethlem = new BethlemMyopathyExample();
+        IIdType individualId = postIndividual(bethlem.individual());
+        System.out.println("Bethlem individual id: " + individualId);
+        return individualId;
+    }
+
+
 }
