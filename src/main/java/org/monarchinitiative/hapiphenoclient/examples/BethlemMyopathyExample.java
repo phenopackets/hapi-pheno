@@ -1,7 +1,9 @@
 package org.monarchinitiative.hapiphenoclient.examples;
 
+import org.hl7.fhir.r4.model.Enumeration;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Karyotype;
 import org.monarchinitiative.hapiphenoclient.phenopacket.KaryotypicSexExtension;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 
@@ -25,7 +27,7 @@ public class BethlemMyopathyExample implements PhenoExample {
         Individual individual = new Individual();
         individual.setId("id.1");
         individual.setGender(Enumerations.AdministrativeGender.MALE);
-        individual.setKaryotypicSex(KaryotypicSexExtension.fromString("XY"));
+        individual.setKaryotypicSex("XY");
         Date birthdate = new GregorianCalendar(2007, Calendar.FEBRUARY, 11).getTime();
         individual.setBirthDate(birthdate);
         return individual;
