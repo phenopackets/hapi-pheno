@@ -6,41 +6,44 @@ import ca.uhn.fhir.util.ElementUtil;
 import org.hl7.fhir.r4.model.*;
 
 
-@ResourceDef(
-        profile="https://github.com/phenopackets/core-ig/StructureDefinition/Individual")
+@ResourceDef(profile="https://github.com/phenopackets/core-ig/StructureDefinition/Individual")
 public class Individual extends Patient {
-
-
-//    @Child(name="karyotypicSex", type = KaryotypicSexExtension.class)
-//    @Extension(url="https://github.com/phenopackets/core-ig/StructureDefinition/KaryotypicSex")
-//    @Description(shortDefinition = "the chromosomal sex of an individual")
-//    private KaryotypicSexExtension karyotype;
-
 
     @Child(name = "karyotypicSex", type = KaryotypicSex.class, order = 2, min = 0, max = 1)
     @Extension(url = "https://github.com/phenopackets/core-ig/StructureDefinition/KaryotypicSex", definedLocally = true, isModifier = false)
+    @Description(shortDefinition = "the chromosomal sex of an individual")
     private KaryotypicSex karyotypicSex;
 
     public KaryotypicSex getKaryotypicSex() {
+        if (karyotypicSex == null) {
+            karyotypicSex = new KaryotypicSex();
+        }
         return karyotypicSex;
     }
 
     public void setKaryotypicSex(String karyotype) {
-        //this.karyotypicSex = Karyotype.fromCode(karyotype);
+        if (karyotypicSex == null) {
+            karyotypicSex = new KaryotypicSex();
+        }
+        this.karyotypicSex.setKaryotype(karyotype);
     }
 
     @Block()
     public static class KaryotypicSex extends BackboneElement  {
-
+        /**
+         * The default value is UNKNOWN_KARYOTYPE
+         */
         @Child(name = "karyotypicSex", type = Enumeration.class, order = 1, min = 0, max = Child.MAX_UNLIMITED)
         @Extension(url="https://github.com/phenopackets/core-ig/StructureDefinition/KaryotypicSex")
-        private Enumeration<Karyotype>  karyotype;
-        private IdType myId;
+        private Enumeration<Karyotype>  karyotype = new Enumeration<>(Karyotype.UNKNOWN_KARYOTYPE);
 
         public Enumeration<Karyotype> getKaryotype() {
             return karyotype;
         }
 
+        public void setKaryotype(String code) {
+            this.karyotype.getEnumFactory().fromCode(code);
+        }
 
         @Override
         public BackboneElement copy() {
@@ -48,7 +51,6 @@ public class Individual extends Patient {
             copy.setKaryotype(karyotype);
             return copy;
         }
-
 
         @Override
         public boolean isEmpty() {
