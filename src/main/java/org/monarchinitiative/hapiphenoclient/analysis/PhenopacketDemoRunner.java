@@ -164,17 +164,12 @@ public class PhenopacketDemoRunner {
         parser.setPrettyPrint(true);
         System.out.println(parser.encodeResourceToString(individual));
 
-        Patient individual2 = new Patient();
-        individual2.setId("id.1");
-        individual2.setGender(Enumerations.AdministrativeGender.MALE);
-        Date birthdate = new GregorianCalendar(2007, Calendar.FEBRUARY, 11).getTime();
-        individual2.setBirthDate(birthdate);
         IGenericClient  client = ctx .newRestfulGenericClient(this.hapiUrl);
         client.registerInterceptor(loggingInterceptor);
         try {
             MethodOutcome outcome = client
                     .create()
-                    .resource(individual2)
+                    .resource(individual)
                     .execute();
             System.out.println(outcome .getId());
             return outcome.getId();

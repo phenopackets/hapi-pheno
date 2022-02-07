@@ -1,12 +1,9 @@
 package org.monarchinitiative.hapiphenoclient.phenopacket;
 
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.api.annotation.Child;
-import ca.uhn.fhir.model.api.annotation.Description;
+import ca.uhn.fhir.model.api.annotation.*;
 import ca.uhn.fhir.model.api.annotation.Extension;
-import ca.uhn.fhir.model.api.annotation.ResourceDef;
-import org.hl7.fhir.r4.model.Meta;
-import org.hl7.fhir.r4.model.Patient;
+import ca.uhn.fhir.util.ElementUtil;
+import org.hl7.fhir.r4.model.*;
 
 
 @ResourceDef(
@@ -14,19 +11,56 @@ import org.hl7.fhir.r4.model.Patient;
 public class Individual extends Patient {
 
 
-    @Child(name="karyotypicSex", type = KaryotypicSexExtension.class)
-    @Extension(url="https://github.com/phenopackets/core-ig/StructureDefinition/KaryotypicSex")
-    @Description(shortDefinition = "the chromosomal sex of an individual")
-    private KaryotypicSexExtension karyotype;
+//    @Child(name="karyotypicSex", type = KaryotypicSexExtension.class)
+//    @Extension(url="https://github.com/phenopackets/core-ig/StructureDefinition/KaryotypicSex")
+//    @Description(shortDefinition = "the chromosomal sex of an individual")
+//    private KaryotypicSexExtension karyotype;
 
 
-    public void setKaryotypicSex(KaryotypicSexExtension k) {
-        this.karyotype = k;
+    @Child(name = "karyotypicSex", type = KaryotypicSex.class, order = 2, min = 0, max = 1)
+    @Extension(url = "https://github.com/phenopackets/core-ig/StructureDefinition/KaryotypicSex", definedLocally = true, isModifier = false)
+    private KaryotypicSex karyotypicSex;
+
+    public KaryotypicSex getKaryotypicSex() {
+        return karyotypicSex;
     }
 
-    public KaryotypicSexExtension getKaryotypicSex() {
-        return this.karyotype;
+    public void setKaryotypicSex(String karyotype) {
+        //this.karyotypicSex = Karyotype.fromCode(karyotype);
     }
+
+    @Block()
+    public static class KaryotypicSex extends BackboneElement  {
+
+        @Child(name = "karyotypicSex", type = Enumeration.class, order = 1, min = 0, max = Child.MAX_UNLIMITED)
+        @Extension(url="https://github.com/phenopackets/core-ig/StructureDefinition/KaryotypicSex")
+        private Enumeration<Karyotype>  karyotype;
+        private IdType myId;
+
+        public Enumeration<Karyotype> getKaryotype() {
+            return karyotype;
+        }
+
+
+        @Override
+        public BackboneElement copy() {
+            KaryotypicSex copy = new KaryotypicSex();
+            copy.setKaryotype(karyotype);
+            return copy;
+        }
+
+
+        @Override
+        public boolean isEmpty() {
+            return ElementUtil.isEmpty(karyotype);
+        }
+
+        public void setKaryotype(Enumeration<Karyotype> k) {
+            karyotype = k;
+        }
+
+    }
+
 
 
 
