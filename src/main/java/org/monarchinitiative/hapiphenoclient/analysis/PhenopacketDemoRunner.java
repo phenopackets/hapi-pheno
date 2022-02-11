@@ -100,7 +100,7 @@ public class PhenopacketDemoRunner {
         System.out.println(parser.encodeResourceToString(individual));
 
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        client.registerInterceptor(loggingInterceptor);
+       // client.registerInterceptor(loggingInterceptor);
         try {
             MethodOutcome outcome = client
                     .create()
@@ -124,7 +124,7 @@ public class PhenopacketDemoRunner {
         System.out.println(parser.encodeResourceToString(pfeature));
 
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        client.registerInterceptor(loggingInterceptor);
+        //client.registerInterceptor(loggingInterceptor);
         try {
             MethodOutcome outcome = client
                     .create()

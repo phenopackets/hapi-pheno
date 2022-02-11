@@ -27,6 +27,15 @@ public class BethlemMyopathyExample implements PhenoExample {
         this.individual.setId(id);
     }
 
+    /**
+     * The FHIR server assigns the patient an ID such as http://localhost:8888/fhir/Patient/208/_history/1
+     * This method would then return "208"
+     * @return
+     */
+    public String getUnqualifiedIndidualId() {
+        return individual.getIdElement().toUnqualified().getIdPart();
+    }
+
 
     /**
      * @return A simulated patient -- 14 year old boy with XY karyotype.
@@ -46,26 +55,12 @@ public class BethlemMyopathyExample implements PhenoExample {
     public List<PhenotypicFeature> phenotypicFeatureList() {
         List<PhenotypicFeature> features = new ArrayList<>();
        // individual.getIdElement().
-        PhenotypicFeature pf = PhenotypicFeature.createObservation("HP:0001558", "Decreased fetal movement", individual.getIdElement().toUnqualified().getIdPart());
+        PhenotypicFeature pf = PhenotypicFeature.createObservation("HP:0001558", "Decreased fetal movement", getUnqualifiedIndidualId());
         features.add(pf);
-
-        /*
-        id: "HP:0001558"
-    label: "Decreased fetal movement"
-  onset:
-    ontologyClass:
-      id: "HP:0011461"
-      label: "Fetal onset"
-  evidence:
-  - evidenceCode:
-      id: "ECO:0000033"
-      label: "author statement supported by traceable reference"
-    reference:
-      id: "PMID:30808312"
-      description: "COL6A1 mutation leading to Bethlem myopathy with recurrent hematuria:\
-        \ a case report."
-         */
-
+        PhenotypicFeature pf2 = PhenotypicFeature.createObservation("HP:0011463", "Macroscopic hematuria", getUnqualifiedIndidualId());
+        features.add(pf2);
+        PhenotypicFeature pf3 = PhenotypicFeature.createObservation("HP:0001270", "Motor delay", getUnqualifiedIndidualId());
+        features.add(pf3);
         return features;
     }
 
