@@ -1,9 +1,9 @@
 package org.monarchinitiative.hapiphenoclient.examples;
 
 import org.hl7.fhir.instance.model.api.IIdType;
-import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.*;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 
@@ -62,6 +62,40 @@ public class BethlemMyopathyExample implements PhenoExample {
         PhenotypicFeature pf3 = PhenotypicFeature.createObservation("HP:0001270", "Motor delay", getUnqualifiedIndidualId());
         features.add(pf3);
         return features;
+    }
+
+    public List<Measurement> measurementList() {
+        List<Measurement> measurements = new ArrayList<>();
+        measurements.add(proteinInUrine());
+        return measurements;
+    }
+
+
+    /**
+     * Proteinuria was 187.60 mg/day
+     * @return
+     */
+    private Measurement proteinInUrine() {
+        Measurement measurement = new Measurement();
+        measurement.setStatus(Observation.ObservationStatus.FINAL);
+        Coding coding = measurement.getCode().addCoding();
+        coding.setCode("2889-4").setSystem("http://loinc.org").setDisplay("Protein (24H U) [Mass/Time]");
+
+        Quantity value = new Quantity();
+        value.setValue(187.60).setSystem("http://unitsofmeasure.org").setCode("mg");
+        measurement.setValue(value);
+
+        SimpleQuantity low = new SimpleQuantity();
+        low.setValue(0).setSystem("http://unitsofmeasure.org").setCode("mg");
+        measurement.getReferenceRangeFirstRep().setLow(low);
+        SimpleQuantity high = new SimpleQuantity();
+        low.setValue(100).setSystem("http://unitsofmeasure.org").setCode("mg");
+        measurement.getReferenceRangeFirstRep().setHigh(high);
+        measurement.setSubject(new Reference( "Patient/"+getUnqualifiedIndidualId()  ));
+
+        Reference perf = measurement.addPerformer();
+        perf.setDisplay("A. Langeveld").setReference("Practitioner/f005/");
+        return measurement;
     }
 
 

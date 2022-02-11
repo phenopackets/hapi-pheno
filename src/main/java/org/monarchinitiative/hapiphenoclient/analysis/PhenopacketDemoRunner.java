@@ -9,7 +9,6 @@ import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
-import org.hl7.fhir.r4.model.Observation.ObservationStatus;
 import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
@@ -20,8 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -61,27 +58,13 @@ public class PhenopacketDemoRunner {
     }
 
 
-    public Measurement createMeasurement() {
-        Measurement obs = new Measurement();
-        obs.setId("obs-example-age-weight-" + 2022 + "-" + 3);
-        obs.setSubject(new Reference().setReference("Patient/123"));
-        obs.setStatus(ObservationStatus.FINAL);
-        Calendar when = Calendar.getInstance();
-        when.add(Calendar.YEAR, 2022);
-        when.add(Calendar.MONTH, 3);
-        obs.setEffective(new DateTimeType(when));
-        obs.getCode().addCoding().setCode("29463-7").setSystem("http://loinc.org");
-        obs.setValue(new Quantity());
-        obs.getValueQuantity().setCode("kg");
-        obs.getValueQuantity().setSystem("http://unitsofmeasure.org");
-        obs.getValueQuantity().setUnit("kg");
-        obs.getValueQuantity().setValue(new BigDecimal(23));
-        return obs;
-    }
 
-    public IIdType postMeasurementToServer(Measurement m) {
+
+    public IIdType postMeasurement(Measurement m) {
+        IParser parser = ctx.newJsonParser();
+        parser.setPrettyPrint(true);
+        System.out.println(parser.encodeResourceToString(m));
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        client.registerInterceptor(loggingInterceptor);
         MethodOutcome
                 outcome = client
                 .create()
@@ -151,6 +134,11 @@ public class PhenopacketDemoRunner {
         for (PhenotypicFeature pfeature : phenotypicFeatureList) {
             IIdType pfeatureId = postPhenotypicFeature(pfeature);
             pfeature.setId(pfeatureId);
+        }
+        List<Measurement> measurementList = bethlem.measurementList();
+        for (Measurement measurement : measurementList) {
+            IIdType measurementId = postMeasurement(measurement);
+            measurement.setId(measurementId);
         }
 
         return individualId;
