@@ -2,6 +2,7 @@ package org.monarchinitiative.hapiphenoclient.examples;
 
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.Identifier;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
@@ -32,7 +33,8 @@ public class BethlemMyopathyExample implements PhenoExample {
      */
     public Individual individual() {
         Individual individual = new Individual();
-        individual.setId("id.1");
+
+        individual.addIdentifier(new Identifier().setValue("id.1").setSystem("http://phenopackets.org"));
         individual.setGender(Enumerations.AdministrativeGender.MALE);
         individual.setKaryotypicSex("XY");
         Date birthdate = new GregorianCalendar(2007, Calendar.FEBRUARY, 11).getTime();
@@ -43,7 +45,8 @@ public class BethlemMyopathyExample implements PhenoExample {
 
     public List<PhenotypicFeature> phenotypicFeatureList() {
         List<PhenotypicFeature> features = new ArrayList<>();
-        PhenotypicFeature pf = PhenotypicFeature.createObservation("HP:0001558", "Decreased fetal movement", individual.getId());
+       // individual.getIdElement().
+        PhenotypicFeature pf = PhenotypicFeature.createObservation("HP:0001558", "Decreased fetal movement", individual.getIdElement().toUnqualified().getIdPart());
         features.add(pf);
 
         /*

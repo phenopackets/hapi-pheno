@@ -131,6 +131,7 @@ public class PhenopacketDemoRunner {
                     .resource(pfeature)
                     .execute();
             System.out.println(outcome.getId());
+            //outcome.getResource().ge
             return outcome.getId();
         } catch (ResourceNotFoundException e) {
             //404 means we can contact the server but the server does not have
