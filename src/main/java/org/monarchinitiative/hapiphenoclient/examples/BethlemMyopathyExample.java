@@ -1,22 +1,29 @@
 package org.monarchinitiative.hapiphenoclient.examples;
 
-import org.hl7.fhir.r4.model.Enumeration;
+import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Karyotype;
-import org.monarchinitiative.hapiphenoclient.phenopacket.KaryotypicSexExtension;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
+import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 public class BethlemMyopathyExample implements PhenoExample {
 
     private final String phenopacketId = "phenopacket.1";
 
-    public BethlemMyopathyExample() {
+    private final Individual individual;
 
+    public BethlemMyopathyExample() {
+        individual = individual();
+    }
+
+    /**
+     * We get the individual ID from posting the Indiviudal to the server, and need to set it here.
+     * @param id
+     */
+    public void setIndividualId(IIdType id) {
+        this.individual.setId(id);
     }
 
 
@@ -32,6 +39,34 @@ public class BethlemMyopathyExample implements PhenoExample {
         individual.setBirthDate(birthdate);
         return individual;
     }
+
+
+    public List<PhenotypicFeature> phenotypicFeatureList() {
+        List<PhenotypicFeature> features = new ArrayList<>();
+        PhenotypicFeature pf = PhenotypicFeature.createObservation("HP:0001558", "Decreased fetal movement", individual.getId());
+        features.add(pf);
+
+        /*
+        id: "HP:0001558"
+    label: "Decreased fetal movement"
+  onset:
+    ontologyClass:
+      id: "HP:0011461"
+      label: "Fetal onset"
+  evidence:
+  - evidenceCode:
+      id: "ECO:0000033"
+      label: "author statement supported by traceable reference"
+    reference:
+      id: "PMID:30808312"
+      description: "COL6A1 mutation leading to Bethlem myopathy with recurrent hematuria:\
+        \ a case report."
+         */
+
+        return features;
+    }
+
+
 
     @Override
     public Phenopacket createPhenopacket() {

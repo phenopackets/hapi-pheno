@@ -13,7 +13,6 @@ import org.hl7.fhir.r4.model.Observation.ObservationStatus;
 import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
-import org.monarchinitiative.hapiphenoclient.phenopacket.KaryotypicSexExtension;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 import org.slf4j.Logger;
@@ -23,8 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * This class is intended to just do two simple operations with a FHIR server
@@ -119,11 +117,41 @@ public class PhenopacketDemoRunner {
         }
     }
 
+    public IIdType postPhenotypicFeature(PhenotypicFeature pfeature) {
+        LOG.info("Posting pfeature={}", pfeature);
+        IParser parser = ctx.newJsonParser();
+        parser.setPrettyPrint(true);
+        System.out.println(parser.encodeResourceToString(pfeature));
+
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        client.registerInterceptor(loggingInterceptor);
+        try {
+            MethodOutcome outcome = client
+                    .create()
+                    .resource(pfeature)
+                    .execute();
+            System.out.println(outcome.getId());
+            return outcome.getId();
+        } catch (ResourceNotFoundException e) {
+            //404 means we can contact the server but the server does not have
+            // the resource we want or does not want to disclose the information
+            //int code = e.getStatusCode();
+            String msg = String.format("Could not create individal: %s\n", e.getMessage());
+            throw new PhenoClientRuntimeException(msg);
+        }
+    }
+
 
     public IIdType postBethlemClinicalExample() {
         BethlemMyopathyExample bethlem = new BethlemMyopathyExample();
         IIdType individualId = postIndividual(bethlem.individual());
-        System.out.println("Bethlem individual id: " + individualId);
+        bethlem.setIndividualId(individualId);
+        List<PhenotypicFeature> phenotypicFeatureList = bethlem.phenotypicFeatureList();
+        for (PhenotypicFeature pfeature : phenotypicFeatureList) {
+            IIdType pfeatureId = postPhenotypicFeature(pfeature);
+            pfeature.setId(pfeatureId);
+        }
+
         return individualId;
     }
 
