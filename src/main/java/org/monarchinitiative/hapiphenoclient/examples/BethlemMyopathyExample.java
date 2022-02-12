@@ -7,6 +7,8 @@ import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class BethlemMyopathyExample implements PhenoExample {
@@ -95,6 +97,15 @@ public class BethlemMyopathyExample implements PhenoExample {
 
         Reference perf = measurement.addPerformer();
         perf.setDisplay("A. Langeveld").setReference("Practitioner/f005/");
+        String dateTime =  "2014-03-08";
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+        Date date;
+        try {
+            date = ft.parse(dateTime);
+            measurement.setEffective(new DateTimeType().setValue(date));
+        } catch (ParseException e) {
+            System.out.println("Unparseable using " + ft);
+        }
         return measurement;
     }
 

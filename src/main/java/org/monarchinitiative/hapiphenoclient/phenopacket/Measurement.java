@@ -7,7 +7,7 @@ import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Reference;
 
 @ResourceDef(
-        profile="https://github.com/phenopackets/core-ig/fhir/StructureDefinition/Measurement")
+        profile="https://github.com/phenopackets/core-ig/StructureDefinition/Measurement")
 public class Measurement extends Observation {
     private static final long serialVersionUID = 1L;
 
