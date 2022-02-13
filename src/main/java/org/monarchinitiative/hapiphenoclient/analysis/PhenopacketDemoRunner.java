@@ -13,12 +13,14 @@ import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,54 +56,22 @@ public class PhenopacketDemoRunner {
                 .execute();
 
         System.out.println("Responses: " + response.getTotal());
-        System.out.println("First response ID: " + response.getEntry().get(0).getResource().getId());
-    }
-
-
-
-
-    public IIdType postMeasurement(Measurement m) {
-        IParser parser = ctx.newJsonParser();
-        parser.setPrettyPrint(true);
-        System.out.println(parser.encodeResourceToString(m));
-        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        MethodOutcome
-                outcome = client
-                .create()
-                .resource(m)
-                .execute();
-        return outcome.getId();
-    }
-
-
-
-
-    public IIdType postIndividual(Individual individual) {
-        LOG.info("Posting individual={}", individual);
-        IParser parser = ctx.newJsonParser();
-        parser.setPrettyPrint(true);
-        System.out.println(parser.encodeResourceToString(individual));
-
-        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-       // client.registerInterceptor(loggingInterceptor);
-        try {
-            MethodOutcome outcome = client
-                    .create()
-                    .resource(individual)
-                    .execute();
-            System.out.println(outcome.getId());
-            return outcome.getId();
-        } catch (ResourceNotFoundException e) {
-            //404 means we can contact the server but the server does not have
-            // the resource we want or does not want to disclose the information
-            //int code = e.getStatusCode();
-            String msg = String.format("Could not create individal: %s\n", e.getMessage());
-            throw new PhenoClientRuntimeException(msg);
+        if (response.getTotal() == 0) {
+            System.out.println("No reponses");
+        } else {
+            System.out.println("First response ID: " + response.getEntry().get(0).getResource().getId());
         }
     }
 
-    public IIdType postPhenotypicFeature(PhenotypicFeature pfeature) {
-        LOG.info("Posting pfeature={}", pfeature);
+
+
+
+
+
+
+
+    public IIdType postResource(Resource pfeature) {
+        LOG.info("Posting resource={}", pfeature);
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
         System.out.println(parser.encodeResourceToString(pfeature));
@@ -126,23 +96,81 @@ public class PhenopacketDemoRunner {
     }
 
 
+    private void prelims() {
+        Practitioner practitioner = new Practitioner();
+        practitioner.setId("xcda-author");
+        HumanName humanName = new HumanName();
+        humanName.setFamily("Hippocrates");
+        humanName.addGiven("Harold");
+        humanName.addSuffix("MD");
+        List<HumanName> names = new ArrayList<>();
+        names.add(humanName);
+        practitioner.setName(names);
+
+        Practitioner practitioner2 = new Practitioner();
+        practitioner2.setId("f005");
+        HumanName humanName2 = new HumanName();
+        humanName2.setFamily("Langeveld");
+        humanName2.addGiven("A");
+        names = new ArrayList<>();
+        names.add(humanName2);
+        practitioner2.setName(names);
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        //client.registerInterceptor(loggingInterceptor);
+        try {
+            MethodOutcome outcome = client
+                    .update()
+                    .resource(practitioner)
+                    .execute();
+            System.out.println(outcome.getId());
+            System.out.println(outcome.getId());
+            outcome = client
+                    .update()
+                    .resource(practitioner2)
+                    .execute();
+            System.out.println(outcome.getId());
+            System.out.println(outcome.getId());
+            //outcome.getResource().ge
+
+        } catch (ResourceNotFoundException e) {
+            //404 means we can contact the server but the server does not have
+            // the resource we want or does not want to disclose the information
+            //int code = e.getStatusCode();
+            String msg = String.format("Could not create Practiioner: %s\n", e.getMessage());
+            throw new PhenoClientRuntimeException(msg);
+        }
+
+
+    }
+
+
+
     public IIdType postBethlemClinicalExample() {
+        prelims();
         BethlemMyopathyExample bethlem = new BethlemMyopathyExample();
-        IIdType individualId = postIndividual(bethlem.individual());
+        IIdType individualId = postResource(bethlem.individual());
         bethlem.setIndividualId(individualId);
         List<PhenotypicFeature> phenotypicFeatureList = bethlem.phenotypicFeatureList();
         for (PhenotypicFeature pfeature : phenotypicFeatureList) {
-            IIdType pfeatureId = postPhenotypicFeature(pfeature);
+            IIdType pfeatureId = postResource(pfeature);
             pfeature.setId(pfeatureId);
         }
-        List<Measurement> measurementList = bethlem.measurementList();
-        for (Measurement measurement : measurementList) {
-            IIdType measurementId = postMeasurement(measurement);
-            measurement.setId(measurementId);
-        }
+
+//        List<Measurement> measurementList = bethlem.measurementList();
+//        for (Measurement measurement : measurementList) {
+//            IIdType measurementId = postMeasurement(measurement);
+//            measurement.setId(measurementId);
+//        }
+
+       Phenopacket phenopacket = bethlem.phenopacket();
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        client.update().resource(phenopacket).execute();
+       // IIdType phenopacketId = postResource(phenopacket);
+
 
         return individualId;
     }
+
 
 
 }

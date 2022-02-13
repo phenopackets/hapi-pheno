@@ -11,7 +11,7 @@ import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
  */
 public interface PhenoExample {
 
-    Phenopacket createPhenopacket();
+    Phenopacket phenopacket();
 
     Phenopacket modifyPhenopacket(Phenopacket p);
 

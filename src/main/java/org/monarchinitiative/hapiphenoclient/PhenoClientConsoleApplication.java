@@ -1,5 +1,6 @@
 package org.monarchinitiative.hapiphenoclient;
 
+import org.hl7.fhir.instance.model.api.IIdType;
 import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,8 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         LOG.info("EXECUTING : command line runner");
-        demoRunner.postBethlemClinicalExample();
+        IIdType patientId = demoRunner.postBethlemClinicalExample();
+        demoRunner.searchForPatient(patientId);
 
     }
 

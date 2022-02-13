@@ -15,7 +15,12 @@ public class BethlemMyopathyExample implements PhenoExample {
 
     private final String phenopacketId = "phenopacket.1";
 
+    private final String GA4GH_SYSTEM = "https://www.ga4gh.org/";
+    private final String GA4GH_TYPE = "phenopacketv2";
+
     private final Individual individual;
+
+    private Phenopacket phenopacket = null;
 
     public BethlemMyopathyExample() {
         individual = individual();
@@ -51,6 +56,43 @@ public class BethlemMyopathyExample implements PhenoExample {
         Date birthdate = new GregorianCalendar(2007, Calendar.FEBRUARY, 11).getTime();
         individual.setBirthDate(birthdate);
         return individual;
+    }
+
+
+
+    @Override
+    public Phenopacket phenopacket() {
+        this.phenopacket = new Phenopacket();
+        this.phenopacket.setIndividual(individual);
+        this.phenopacket.setStatus(Composition.CompositionStatus.FINAL);
+        this.phenopacket.setSubject(new Reference("Patient/" + getUnqualifiedIndidualId()));
+        CodeableConcept ga4ghType = new CodeableConcept();
+        ga4ghType.addCoding(
+                new Coding().setSystem(GA4GH_SYSTEM)
+                        .setCode(GA4GH_TYPE));
+        this.phenopacket.setType(ga4ghType);
+        this.phenopacket.setDate(new Date()); // current date/time
+        //"author": [
+        //    {
+        //      "reference": "Practitioner/xcda-author",
+        //      "display": "Harold Hippocrates, MD"
+        //    }
+        //  ],
+        this.phenopacket.addAuthor().setReference("Practitioner/xcda-author").setDisplay("Harold Hippocrates, MD");
+        this.phenopacket.setTitle("Phenopacket");
+       // this.phenopacket.setIdentifier(phenopacketId);
+        phenopacket.setId("COMPOSITION-ABC");
+        return phenopacket;
+
+        /*
+
+Composition composition = new Composition();
+composition.setId("COMPOSITION-ABC");
+composition.setSubject(new Reference("Patient/PATIENT-ABC"));
+composition.addSection().setFocus(new Reference("Observation/OBSERVATION-ABC"));
+client.update().resource(composition).execute();
+
+         */
     }
 
 
@@ -111,12 +153,6 @@ public class BethlemMyopathyExample implements PhenoExample {
 
 
 
-    @Override
-    public Phenopacket createPhenopacket() {
-        Phenopacket phenopacket = new Phenopacket(phenopacketId);
-        phenopacket.setIndividual(individual());
-        return phenopacket;
-    }
 
     @Override
     public Phenopacket modifyPhenopacket(Phenopacket p) {
