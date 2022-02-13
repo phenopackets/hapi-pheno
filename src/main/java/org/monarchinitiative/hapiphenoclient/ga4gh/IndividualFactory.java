@@ -1,7 +1,6 @@
 package org.monarchinitiative.hapiphenoclient.ga4gh;
 
 import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Period;
 import org.phenopackets.schema.v2.core.Age;
 import org.phenopackets.schema.v2.core.Individual;
 import org.phenopackets.schema.v2.core.Sex;

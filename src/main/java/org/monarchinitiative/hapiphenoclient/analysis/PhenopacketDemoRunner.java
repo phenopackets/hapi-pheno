@@ -11,8 +11,6 @@ import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
 import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 import org.slf4j.Logger;
