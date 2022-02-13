@@ -14,7 +14,7 @@ public class ApplicationProperties {
 
     @Autowired
     public ApplicationProperties(@Value("${hapi.server}") String serverUrl,
-                                 @Value("${phenoclient.version}") String version,
+                                 @Value("${application.version}") String version,
                                 @Value("${ig.path}") String fhirIgPath) {
         this.hapiServerUrl = serverUrl;
         this.applicationVersion = version;

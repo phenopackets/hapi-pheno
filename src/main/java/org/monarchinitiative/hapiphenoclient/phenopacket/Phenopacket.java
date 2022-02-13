@@ -9,16 +9,15 @@ import java.util.List;
 import java.util.Optional;
 
 @ResourceDef(
-        profile="https://github.com/phenopackets/core-ig/fhir/StructureDefinition/Phenopacket")
+        profile="https://github.com/phenopackets/core-ig/StructureDefinition/Phenopacket")
 public class Phenopacket extends Composition {
 
-    private final String phenopacketId;
+    private String phenopacketId;
 
     private Reference subject;
 
 
-    public Phenopacket(String id) {
-        this.phenopacketId = id;
+    public Phenopacket() {
     }
 
 

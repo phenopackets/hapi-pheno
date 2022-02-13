@@ -38,7 +38,7 @@ public class PhenotypicFeature extends Observation {
                         new Coding().setSystem(system)
                                 .setCode(hpoCode)
                                 .setDisplay(hpoLabel)))
-                .setSubject(new Reference("Patient/" + patId))
+                .setSubject(new Reference( "Patient/"+patId ))
                 .setValue(new CodeableConcept().addCoding(
                         new Coding().setSystem(valueSystemLoinc)
                                 .setCode(valueCodeLoincPresent)
