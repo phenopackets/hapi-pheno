@@ -60,6 +60,11 @@
             <version>${hapi.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.phenopackets</groupId>
+            <artifactId>phenopacket-schema</artifactId>
+            <version>2.0.0</version>
+        </dependency>
 
 
         <dependency>
