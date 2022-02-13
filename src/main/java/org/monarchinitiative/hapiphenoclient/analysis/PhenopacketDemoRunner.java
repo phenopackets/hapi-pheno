@@ -47,11 +47,25 @@ public class PhenopacketDemoRunner {
     }
 
 
-    public void searchForPatient(IIdType id) {
+    public Bundle searchForPatient(IIdType id) {
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         Bundle response = client.search()
                 .forResource(Patient.class)
-                .where(Patient.NAME.matches().value("Simpson"))
+                .where(Resource.RES_ID.exactly().code(id.getIdPart()))
+                .returnBundle(Bundle.class)
+                .execute();
+        IParser parser = ctx.newJsonParser();
+        parser.setPrettyPrint(true);
+        System.out.println(parser.encodeResourceToString(response));
+        return response;
+    }
+
+
+    public void searchByPatientId(IIdType id) {
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        Bundle response = client.search()
+                .forResource(PhenotypicFeature.class)
+                .where(Patient.FAMILY.matches().value("Smith"))
                 .returnBundle(Bundle.class)
                 .execute();
 
@@ -75,16 +89,13 @@ public class PhenopacketDemoRunner {
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
         System.out.println(parser.encodeResourceToString(pfeature));
-
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        //client.registerInterceptor(loggingInterceptor);
         try {
             MethodOutcome outcome = client
                     .create()
                     .resource(pfeature)
                     .execute();
             System.out.println(outcome.getId());
-            //outcome.getResource().ge
             return outcome.getId();
         } catch (ResourceNotFoundException e) {
             //404 means we can contact the server but the server does not have

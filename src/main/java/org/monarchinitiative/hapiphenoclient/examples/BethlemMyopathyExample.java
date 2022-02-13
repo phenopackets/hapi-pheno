@@ -49,7 +49,8 @@ public class BethlemMyopathyExample implements PhenoExample {
      */
     public Individual individual() {
         Individual individual = new Individual();
-
+        HumanName name = new HumanName();
+        name.setFamily("Smith");
         individual.addIdentifier(new Identifier().setValue("id.1").setSystem("http://phenopackets.org"));
         individual.setGender(Enumerations.AdministrativeGender.MALE);
         individual.setKaryotypicSex("XY");
