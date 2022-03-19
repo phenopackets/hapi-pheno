@@ -169,21 +169,7 @@ public class PhenopacketDemoRunner {
             String msg = String.format("Could not create Practiioner: %s\n", e.getMessage());
             throw new PhenoClientRuntimeException(msg);
         }
-
-
     }
-
-    public void addResourceToComposition(Resource resource, Composition.SectionComponent section) {
-        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-       // Composition composition = new Composition();
-       // composition.setId(phenopacketId);
-        //composition.setSubject(new Reference("Patient/PATIENT-ABC"));
-        section.setFocus(new Reference(resource.getId()));
-        //client.update().resource(phenopacket).execute();
-
-
-    }
-
 
 
     public PhenoExample postBethlemClinicalExample() {
