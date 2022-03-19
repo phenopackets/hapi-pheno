@@ -75,7 +75,7 @@ public class BethlemMyopathyExample implements PhenoExample {
         this.phenopacket.setType(ga4ghType);
         this.phenopacket.setDate(new Date()); // current date/time
         this.phenopacket.addAuthor().setReference(williamHarvey.getReference()).setDisplay(williamHarvey.getDisplayName());
-        this.phenopacket.setTitle("Phenopacket: Behtlem Myopathy");
+        this.phenopacket.setTitle("Phenopacket: Bethlem Myopathy");
         phenopacket.setId("example.id");
         return phenopacket;
 
@@ -133,7 +133,7 @@ client.update().resource(composition).execute();
 
         Reference perf = measurement.addPerformer();
         perf.setDisplay(williamHarvey.getDisplayName()).setReference(williamHarvey.getReference());
-        String dateTime =  "2014-03-08";
+        String dateTime = "2014-03-08";
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
         Date date;
         try {
