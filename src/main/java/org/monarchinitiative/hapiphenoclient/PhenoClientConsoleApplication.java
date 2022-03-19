@@ -2,8 +2,11 @@ package org.monarchinitiative.hapiphenoclient;
 
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Parameters;
 import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Resource;
 import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner;
+import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
 import org.monarchinitiative.hapiphenoclient.ga4gh.IndividualFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +38,8 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         LOG.info("EXECUTING : command line runner");
-        IIdType patientId = demoRunner.postBethlemClinicalExample();
-        Bundle patientBundle = demoRunner.searchForPatient(patientId);
+        PhenoExample bethlem = demoRunner.postBethlemClinicalExample();
+        Bundle patientBundle = demoRunner.searchForPatient(bethlem.getPhenopacketId());
         System.out.println(patientBundle);
         List<Bundle.BundleEntryComponent> entries = patientBundle.getEntry();
         for (var entry : entries) {
@@ -47,6 +50,8 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
                 System.out.println(ga4ghIndividual);
             }
         }
+        System.out.println("*************************");
+
     }
 
 

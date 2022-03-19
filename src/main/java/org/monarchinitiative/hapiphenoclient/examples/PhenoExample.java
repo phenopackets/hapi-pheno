@@ -1,5 +1,6 @@
 package org.monarchinitiative.hapiphenoclient.examples;
 
+import org.hl7.fhir.instance.model.api.IIdType;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 
 /**
@@ -14,6 +15,11 @@ public interface PhenoExample {
     Phenopacket phenopacket();
 
     Phenopacket modifyPhenopacket(Phenopacket p);
+
+    void setIndividualId(IIdType individualId);
+    void setPhenopacketId(IIdType phenopacketId);
+
+    IIdType getPhenopacketId();
 
 
 

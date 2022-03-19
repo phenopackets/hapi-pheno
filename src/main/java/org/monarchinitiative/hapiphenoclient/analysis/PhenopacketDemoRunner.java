@@ -1,6 +1,7 @@
 package org.monarchinitiative.hapiphenoclient.analysis;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -10,7 +11,10 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
 import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
+import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
+import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 import org.slf4j.Logger;
@@ -45,7 +49,36 @@ public class PhenopacketDemoRunner {
     }
 
 
-    public Bundle searchForPatient(IIdType id) {
+    public Parameters searchForPhenopacketEverything(IIdType id) {
+
+
+
+        org.hl7.fhir.r4.model.DateType dtBeg = new DateType("2019-11-01");
+        org.hl7.fhir.r4.model.DateType dtEnd = new DateType("2023-02-02");
+        Parameters inParams = new Parameters();
+        {
+           inParams.addParameter().setName("start").setValue(dtBeg);
+           inParams.addParameter().setName("end").setValue(dtEnd);
+        }
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        Parameters outParams =  client.operation()
+                .onInstance(new IdDt("Composition", id.getIdPart()))
+                .named("$everything")
+                //.withNoParameters(Parameters.class) // No input parameters
+                .withParameters(inParams)
+                .useHttpGet() // Use HTTP GET instead of POST
+                .execute();
+                ;
+        return outParams;
+
+
+
+
+
+
+    }
+
+        public Bundle searchForPatient(IIdType id) {
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         Bundle response = client.search()
                 .forResource(Patient.class)
@@ -106,21 +139,23 @@ public class PhenopacketDemoRunner {
 
 
     private void prelims() {
+        MyPractitioner williamHarvey = MyPractitioner.harvey();
         Practitioner practitioner = new Practitioner();
-        practitioner.setId("xcda-author");
+        practitioner.setId(williamHarvey.getId());
         HumanName humanName = new HumanName();
-        humanName.setFamily("Hippocrates");
-        humanName.addGiven("Harold");
-        humanName.addSuffix("MD");
+        humanName.setFamily(williamHarvey.getFamilyName());
+        humanName.addGiven(williamHarvey.getGivenName());
+        humanName.addSuffix(williamHarvey.suffix());
         List<HumanName> names = new ArrayList<>();
         names.add(humanName);
         practitioner.setName(names);
 
+        MyPractitioner apgar = MyPractitioner.apgar();
         Practitioner practitioner2 = new Practitioner();
-        practitioner2.setId("f005");
+        practitioner2.setId(apgar.getId());
         HumanName humanName2 = new HumanName();
-        humanName2.setFamily("Langeveld");
-        humanName2.addGiven("A");
+        humanName2.setFamily(apgar.getFamilyName());
+        humanName2.addGiven(apgar.getGivenName());
         names = new ArrayList<>();
         names.add(humanName2);
         practitioner2.setName(names);
@@ -154,7 +189,7 @@ public class PhenopacketDemoRunner {
 
 
 
-    public IIdType postBethlemClinicalExample() {
+    public PhenoExample postBethlemClinicalExample() {
         prelims();
         BethlemMyopathyExample bethlem = new BethlemMyopathyExample();
         IIdType individualId = postResource(bethlem.individual());
@@ -165,19 +200,22 @@ public class PhenopacketDemoRunner {
             pfeature.setId(pfeatureId);
         }
 
-//        List<Measurement> measurementList = bethlem.measurementList();
-//        for (Measurement measurement : measurementList) {
-//            IIdType measurementId = postMeasurement(measurement);
+        List<Measurement> measurementList = bethlem.measurementList();
+        for (Measurement measurement : measurementList) {
+            IIdType measurementId = postResource(measurement);
 //            measurement.setId(measurementId);
-//        }
+        }
 
        Phenopacket phenopacket = bethlem.phenopacket();
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        client.update().resource(phenopacket).execute();
-       // IIdType phenopacketId = postResource(phenopacket);
+        MethodOutcome methodOutcome = client.update().resource(phenopacket).execute();
+        if (methodOutcome.getId() == null) {
+            throw new PhenoClientRuntimeException("Could not retrieve Phenopacket ID from server");
+        }
+        IIdType phnenopacketId = methodOutcome.getId();
+        bethlem.setPhenopacketId(phnenopacketId);
 
-
-        return individualId;
+        return bethlem;
     }
 
 
