@@ -1,6 +1,7 @@
 package org.monarchinitiative.hapiphenoclient.analysis;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.Include;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
@@ -73,6 +74,8 @@ public class PhenopacketDemoRunner {
         Bundle response = client.search()
                 .forResource(Phenopacket.class)
                 .where(Resource.RES_ID.exactly().code(id.getIdPart()))
+                .include(new Include("Phenopacket/$everything"))
+                .include(new Include("Observation/$everything"))
                 .returnBundle(Bundle.class)
                 .execute();
         IParser parser = ctx.newJsonParser();
@@ -209,7 +212,7 @@ public class PhenopacketDemoRunner {
                                 .addCoding(new Coding()
                                         .setCode("measurements")
                                         .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
-        phenopacket.addSection(phenotypicFeaturesSection);
+        phenopacket.addSection(measurementSection);
         List<Measurement> measurementList = bethlem.measurementList();
         for (Measurement measurement : measurementList) {
             IIdType measurementId = postResource(measurement);
