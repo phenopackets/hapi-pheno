@@ -85,6 +85,55 @@ public class PhenopacketDemoRunner {
     }
 
 
+    public List<PhenotypicFeature> retrievePhenotypicFeaturesFromBundle(Bundle patientBundle) {
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        List<Bundle.BundleEntryComponent> entries = patientBundle.getEntry();
+        List<PhenotypicFeature> pfeatures = new ArrayList<>();
+        for (var entry : entries) {
+            if (entry.getResource() instanceof Composition) {
+                Composition composition = (Composition) entry.getResource();
+                for (Composition.SectionComponent c : composition.getSection()) {
+                    if (c.getCode().getCodingFirstRep().getCode().equals("phenotypic_features")) {
+                        // expect observations
+                        List<Reference> reflist = c.getEntry();
+                        for (Reference ref : reflist) {
+                            String id = ref.getReference();
+                            System.out.println("PF id = " + id);
+                            PhenotypicFeature pf = client.read().resource(PhenotypicFeature.class).withId(id).execute();
+                            pfeatures.add(pf);
+                        }
+                    }
+                }
+            }
+        }
+        return pfeatures;
+    }
+
+    public List<Measurement> retrieveMeasurementsFromBundle(Bundle patientBundle) {
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        List<Bundle.BundleEntryComponent> entries = patientBundle.getEntry();
+        List<Measurement> measurementList = new ArrayList<>();
+        for (var entry : entries) {
+            if (entry.getResource() instanceof Composition) {
+                Composition composition = (Composition) entry.getResource();
+                for (Composition.SectionComponent c : composition.getSection()) {
+                    if (c.getCode().getCodingFirstRep().getCode().equals("measurements")) {
+                        // expect observations
+                        List<Reference> reflist = c.getEntry();
+                        for (Reference ref : reflist) {
+                            String id = ref.getReference();
+                            System.out.println("Measurement id = " + id);
+                            Measurement pf = client.read().resource(Measurement.class).withId(id).execute();
+                            measurementList.add(pf);
+                        }
+                    }
+                }
+            }
+        }
+        return measurementList;
+    }
+
+
     public void searchByPatientId(IIdType id) {
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         Bundle response = client.search()
@@ -100,7 +149,6 @@ public class PhenopacketDemoRunner {
             System.out.println("First response ID: " + response.getEntry().get(0).getResource().getId());
         }
     }
-
 
 
 

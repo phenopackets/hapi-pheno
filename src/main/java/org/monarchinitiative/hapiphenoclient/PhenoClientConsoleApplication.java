@@ -5,6 +5,8 @@ import org.hl7.fhir.r4.model.Patient;
 import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner;
 import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
 import org.monarchinitiative.hapiphenoclient.ga4gh.IndividualFactory;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
+import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +52,15 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
             }
         }
         System.out.println("*************************");
-
+        // get the PhenotypicFeature elements
+        List<PhenotypicFeature> features = demoRunner.retrievePhenotypicFeaturesFromBundle(patientBundle);
+        for (PhenotypicFeature phenotypicFeature : features) {
+            System.out.println("PF" + phenotypicFeature);
+        }
+        List<Measurement> measurements = demoRunner.retrieveMeasurementsFromBundle(patientBundle);
+        for (Measurement measurement : measurements) {
+            System.out.println("Measurment" + measurement);
+        }
     }
 
 

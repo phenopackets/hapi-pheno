@@ -3,10 +3,7 @@ package org.monarchinitiative.hapiphenoclient.examples;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
+import org.monarchinitiative.hapiphenoclient.phenopacket.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,7 +35,7 @@ public class BethlemMyopathyExample implements PhenoExample {
     /**
      * The FHIR server assigns the patient an ID such as http://localhost:8888/fhir/Patient/208/_history/1
      * This method would then return "208"
-     * @return
+     * @return the individual id (assigned by FHIR server) as string
      */
     public String getUnqualifiedIndidualId() {
         return individual.getIdElement().toUnqualified().getIdPart();
@@ -111,7 +108,7 @@ client.update().resource(composition).execute();
 
     /**
      * Proteinuria was 187.60 mg/day
-     * @return
+     * @return A measurement reflecting protein in urine
      */
     private Measurement proteinInUrine() {
         Measurement measurement = new Measurement();
@@ -144,6 +141,19 @@ client.update().resource(composition).execute();
         }
         return measurement;
     }
+
+
+
+    PhenopacketsVariant createPhenopacketsVariant() {
+        PhenopacketsVariant phenopacketsVariant = new PhenopacketsVariant();
+        // add * component[gene-studied].valueCodeableConcept.coding = HGNC#HGNC:3477 "ETF1"
+
+
+
+        return phenopacketsVariant;
+
+    }
+
 
 
 
