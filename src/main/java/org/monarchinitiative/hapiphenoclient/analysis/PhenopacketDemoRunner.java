@@ -1,6 +1,8 @@
 package org.monarchinitiative.hapiphenoclient.analysis;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -10,7 +12,11 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
 import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
+import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
+import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
 import org.slf4j.Logger;
@@ -59,6 +65,88 @@ public class PhenopacketDemoRunner {
     }
 
 
+    public Parameters searchForPhenopacketEverything(IIdType id) {
+        org.hl7.fhir.r4.model.DateType dtBeg = new DateType("2019-11-01");
+        org.hl7.fhir.r4.model.DateType dtEnd = new DateType("2023-02-02");
+        Parameters inParams = new Parameters();
+        {
+           inParams.addParameter().setName("start").setValue(dtBeg);
+           inParams.addParameter().setName("end").setValue(dtEnd);
+        }
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        Parameters outParams =  client.operation()
+                .onInstance(new IdDt("Composition", id.getIdPart()))
+                .named("$everything")
+                //.withNoParameters(Parameters.class) // No input parameters
+                .withParameters(inParams)
+                .useHttpGet() // Use HTTP GET instead of POST
+                .execute();
+        return outParams;
+    }
+
+    public Bundle searchForPhenopacketById(IIdType id) {
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        Bundle response = client.search()
+                .forResource(Phenopacket.class)
+                .where(Resource.RES_ID.exactly().code(id.getIdPart()))
+                .returnBundle(Bundle.class)
+                .execute();
+        IParser parser = ctx.newJsonParser();
+        parser.setPrettyPrint(true);
+        System.out.println(parser.encodeResourceToString(response));
+        return response;
+    }
+
+
+    public List<PhenotypicFeature> retrievePhenotypicFeaturesFromBundle(Bundle patientBundle) {
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        List<Bundle.BundleEntryComponent> entries = patientBundle.getEntry();
+        List<PhenotypicFeature> pfeatures = new ArrayList<>();
+        for (var entry : entries) {
+            if (entry.getResource() instanceof Composition) {
+                Composition composition = (Composition) entry.getResource();
+                for (Composition.SectionComponent c : composition.getSection()) {
+                    if (c.getCode().getCodingFirstRep().getCode().equals("phenotypic_features")) {
+                        // expect observations
+                        List<Reference> reflist = c.getEntry();
+                        for (Reference ref : reflist) {
+                            String id = ref.getReference();
+                            System.out.println("PF id = " + id);
+                            PhenotypicFeature pf = client.read().resource(PhenotypicFeature.class).withId(id).execute();
+                            pfeatures.add(pf);
+                        }
+                    }
+                }
+            }
+        }
+        return pfeatures;
+    }
+
+    public List<Measurement> retrieveMeasurementsFromBundle(Bundle patientBundle) {
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        List<Bundle.BundleEntryComponent> entries = patientBundle.getEntry();
+        List<Measurement> measurementList = new ArrayList<>();
+        for (var entry : entries) {
+            if (entry.getResource() instanceof Composition) {
+                Composition composition = (Composition) entry.getResource();
+                for (Composition.SectionComponent c : composition.getSection()) {
+                    if (c.getCode().getCodingFirstRep().getCode().equals("measurements")) {
+                        // expect observations
+                        List<Reference> reflist = c.getEntry();
+                        for (Reference ref : reflist) {
+                            String id = ref.getReference();
+                            System.out.println("Measurement id = " + id);
+                            Measurement pf = client.read().resource(Measurement.class).withId(id).execute();
+                            measurementList.add(pf);
+                        }
+                    }
+                }
+            }
+        }
+        return measurementList;
+    }
+
+
     public void searchByPatientId(IIdType id) {
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         Bundle response = client.search()
@@ -81,12 +169,11 @@ public class PhenopacketDemoRunner {
 
 
 
-
     public IIdType postResource(Resource pfeature) {
         LOG.info("Posting resource={}", pfeature);
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
-        System.out.println(parser.encodeResourceToString(pfeature));
+       // System.out.println(parser.encodeResourceToString(pfeature));
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         try {
             MethodOutcome outcome = client
@@ -106,21 +193,23 @@ public class PhenopacketDemoRunner {
 
 
     private void prelims() {
+        MyPractitioner williamHarvey = MyPractitioner.harvey();
         Practitioner practitioner = new Practitioner();
-        practitioner.setId("xcda-author");
+        practitioner.setId(williamHarvey.getId());
         HumanName humanName = new HumanName();
-        humanName.setFamily("Hippocrates");
-        humanName.addGiven("Harold");
-        humanName.addSuffix("MD");
+        humanName.setFamily(williamHarvey.getFamilyName());
+        humanName.addGiven(williamHarvey.getGivenName());
+        humanName.addSuffix(williamHarvey.suffix());
         List<HumanName> names = new ArrayList<>();
         names.add(humanName);
         practitioner.setName(names);
 
+        MyPractitioner apgar = MyPractitioner.apgar();
         Practitioner practitioner2 = new Practitioner();
-        practitioner2.setId("f005");
+        practitioner2.setId(apgar.getId());
         HumanName humanName2 = new HumanName();
-        humanName2.setFamily("Langeveld");
-        humanName2.addGiven("A");
+        humanName2.setFamily(apgar.getFamilyName());
+        humanName2.addGiven(apgar.getGivenName());
         names = new ArrayList<>();
         names.add(humanName2);
         practitioner2.setName(names);
@@ -132,15 +221,11 @@ public class PhenopacketDemoRunner {
                     .resource(practitioner)
                     .execute();
             System.out.println(outcome.getId());
-            System.out.println(outcome.getId());
             outcome = client
                     .update()
                     .resource(practitioner2)
                     .execute();
             System.out.println(outcome.getId());
-            System.out.println(outcome.getId());
-            //outcome.getResource().ge
-
         } catch (ResourceNotFoundException e) {
             //404 means we can contact the server but the server does not have
             // the resource we want or does not want to disclose the information
@@ -148,38 +233,71 @@ public class PhenopacketDemoRunner {
             String msg = String.format("Could not create Practiioner: %s\n", e.getMessage());
             throw new PhenoClientRuntimeException(msg);
         }
-
-
     }
 
 
-
-    public IIdType postBethlemClinicalExample() {
+    public PhenoExample postBethlemClinicalExample() {
         prelims();
         BethlemMyopathyExample bethlem = new BethlemMyopathyExample();
         IIdType individualId = postResource(bethlem.individual());
         bethlem.setIndividualId(individualId);
+
+
+        Phenopacket phenopacket = bethlem.phenopacket();
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        MethodOutcome methodOutcome = client.update().resource(phenopacket).execute();
+        if (methodOutcome.getId() == null) {
+            throw new PhenoClientRuntimeException("Could not retrieve Phenopacket ID from server");
+        }
+        IIdType phnenopacketId = methodOutcome.getId();
+        bethlem.setPhenopacketId(phnenopacketId);
         List<PhenotypicFeature> phenotypicFeatureList = bethlem.phenotypicFeatureList();
+        Composition.SectionComponent phenotypicFeaturesSection =
+                new Composition.SectionComponent()
+                        .setTitle("phenotypic_features")
+                        .setCode(new CodeableConcept()
+                                .addCoding(new Coding()
+                                                .setCode("phenotypic_features")
+                                                .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
+        phenopacket.addSection(phenotypicFeaturesSection);
         for (PhenotypicFeature pfeature : phenotypicFeatureList) {
             IIdType pfeatureId = postResource(pfeature);
-            pfeature.setId(pfeatureId);
+            pfeature.setId(pfeatureId.getIdPart());
+            phenotypicFeaturesSection.addEntry(new Reference(pfeature));
+            client.update().resource(phenopacket).execute();
         }
-
-//        List<Measurement> measurementList = bethlem.measurementList();
-//        for (Measurement measurement : measurementList) {
-//            IIdType measurementId = postMeasurement(measurement);
-//            measurement.setId(measurementId);
-//        }
-
-       Phenopacket phenopacket = bethlem.phenopacket();
-        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        client.update().resource(phenopacket).execute();
-       // IIdType phenopacketId = postResource(phenopacket);
-
-
-        return individualId;
+        Composition.SectionComponent measurementSection =
+                new Composition.SectionComponent()
+                        .setTitle("measurements")
+                        .setCode(new CodeableConcept()
+                                .addCoding(new Coding()
+                                        .setCode("measurements")
+                                        .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
+        phenopacket.addSection(measurementSection);
+        List<Measurement> measurementList = bethlem.measurementList();
+        for (Measurement measurement : measurementList) {
+            IIdType measurementId = postResource(measurement);
+            measurement.setId(measurementId.getIdPart());
+            measurementSection.addEntry(new Reference(measurement));
+            client.update().resource(phenopacket).execute();
+        }
+        return bethlem;
     }
 
 
+    /*
+    List<Bundle.BundleEntryComponent> entries = patientBundle.getEntry();
+        for (var entry : entries) {
+            if (entry.getResource() instanceof Patient) {
+                Patient patient = (Patient) entry.getResource();
+     */
 
+    public Individual extractIndividual(String individualId) {
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        Individual indi = client.read().resource(Individual.class).withId(individualId).execute();
+        if (indi == null) {
+            throw new PhenoClientRuntimeException("Could not retrieve individual with id "+ individualId);
+        }
+        return indi;
+    }
 }

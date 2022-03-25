@@ -1,17 +1,14 @@
 package org.monarchinitiative.hapiphenoclient.ga4gh;
 
 import org.hl7.fhir.r4.model.Patient;
-import org.phenopackets.schema.v2.core.Age;
-import org.phenopackets.schema.v2.core.Individual;
-import org.phenopackets.schema.v2.core.Sex;
-import org.phenopackets.schema.v2.core.TimeElement;
+import org.phenopackets.schema.v2.core.*;
 
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-public class IndividualFactory {
+public class IndividualTransformer {
 
 /*
   Individual individual = new Individual();
@@ -25,7 +22,7 @@ public class IndividualFactory {
         return individual;
  */
 
-    public static Individual toGa4gh(Patient patient) {
+    public static Individual toGa4gh(org.monarchinitiative.hapiphenoclient.phenopacket.Individual patient) {
         Individual.Builder builder = Individual.newBuilder();
         if (patient.getId() != null) {
             builder.setId(patient.getId());
@@ -47,8 +44,12 @@ public class IndividualFactory {
         LocalDate stop = convertToLocalDate(now);
         long years = java.time.temporal.ChronoUnit.YEARS.between( start , stop );
         String isoAge = String.format("P%dY", years);
+        org.monarchinitiative.hapiphenoclient.phenopacket.Individual.KaryotypicSex ksex = patient.getKaryotypicSex();
         builder.setTimeAtLastEncounter(TimeElement.newBuilder()
                 .setAge(Age.newBuilder().setIso8601Duration(isoAge)).build());
+        if (!ksex.isEmpty()) {
+            builder.setKaryotypicSex(KaryotypicSex.valueOf(ksex.getKaryotype().getCode()));
+        }
         return builder.build();
 
     }

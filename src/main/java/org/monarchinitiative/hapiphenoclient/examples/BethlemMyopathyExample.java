@@ -2,10 +2,8 @@ package org.monarchinitiative.hapiphenoclient.examples;
 
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
+import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
+import org.monarchinitiative.hapiphenoclient.phenopacket.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,31 +11,31 @@ import java.util.*;
 
 public class BethlemMyopathyExample implements PhenoExample {
 
-    private final String phenopacketId = "phenopacket.1";
+    private final String phenopacketIdentifier = "phenopacket.1";
 
     private final String GA4GH_SYSTEM = "https://www.ga4gh.org/";
     private final String GA4GH_TYPE = "phenopacketv2";
+
+    private final MyPractitioner williamHarvey = MyPractitioner.harvey();
 
     private final Individual individual;
 
     private Phenopacket phenopacket = null;
 
+    private IIdType phenopacketId = null;
+
+
+
     public BethlemMyopathyExample() {
         individual = individual();
     }
 
-    /**
-     * We get the individual ID from posting the Indiviudal to the server, and need to set it here.
-     * @param id
-     */
-    public void setIndividualId(IIdType id) {
-        this.individual.setId(id);
-    }
+
 
     /**
      * The FHIR server assigns the patient an ID such as http://localhost:8888/fhir/Patient/208/_history/1
      * This method would then return "208"
-     * @return
+     * @return the individual id (assigned by FHIR server) as string
      */
     public String getUnqualifiedIndidualId() {
         return individual.getIdElement().toUnqualified().getIdPart();
@@ -73,16 +71,9 @@ public class BethlemMyopathyExample implements PhenoExample {
                         .setCode(GA4GH_TYPE));
         this.phenopacket.setType(ga4ghType);
         this.phenopacket.setDate(new Date()); // current date/time
-        //"author": [
-        //    {
-        //      "reference": "Practitioner/xcda-author",
-        //      "display": "Harold Hippocrates, MD"
-        //    }
-        //  ],
-        this.phenopacket.addAuthor().setReference("Practitioner/xcda-author").setDisplay("Harold Hippocrates, MD");
-        this.phenopacket.setTitle("Phenopacket");
-       // this.phenopacket.setIdentifier(phenopacketId);
-        phenopacket.setId("COMPOSITION-ABC");
+        this.phenopacket.addAuthor().setReference(williamHarvey.getReference()).setDisplay(williamHarvey.getDisplayName());
+        this.phenopacket.setTitle("Phenopacket: Bethlem Myopathy");
+        phenopacket.setId("example.id");
         return phenopacket;
 
         /*
@@ -99,7 +90,6 @@ client.update().resource(composition).execute();
 
     public List<PhenotypicFeature> phenotypicFeatureList() {
         List<PhenotypicFeature> features = new ArrayList<>();
-       // individual.getIdElement().
         PhenotypicFeature pf = PhenotypicFeature.createObservation("HP:0001558", "Decreased fetal movement", getUnqualifiedIndidualId());
         features.add(pf);
         PhenotypicFeature pf2 = PhenotypicFeature.createObservation("HP:0011463", "Macroscopic hematuria", getUnqualifiedIndidualId());
@@ -118,7 +108,7 @@ client.update().resource(composition).execute();
 
     /**
      * Proteinuria was 187.60 mg/day
-     * @return
+     * @return A measurement reflecting protein in urine
      */
     private Measurement proteinInUrine() {
         Measurement measurement = new Measurement();
@@ -139,8 +129,8 @@ client.update().resource(composition).execute();
         measurement.setSubject(new Reference( "Patient/"+getUnqualifiedIndidualId()  ));
 
         Reference perf = measurement.addPerformer();
-        perf.setDisplay("A. Langeveld").setReference("Practitioner/f005/");
-        String dateTime =  "2014-03-08";
+        perf.setDisplay(williamHarvey.getDisplayName()).setReference(williamHarvey.getReference());
+        String dateTime = "2014-03-08";
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
         Date date;
         try {
@@ -154,9 +144,40 @@ client.update().resource(composition).execute();
 
 
 
+    PhenopacketsVariant createPhenopacketsVariant() {
+        PhenopacketsVariant phenopacketsVariant = new PhenopacketsVariant();
+        // add * component[gene-studied].valueCodeableConcept.coding = HGNC#HGNC:3477 "ETF1"
+
+
+
+        return phenopacketsVariant;
+
+    }
+
+
+
+
 
     @Override
     public Phenopacket modifyPhenopacket(Phenopacket p) {
         return null;
     }
+
+
+    @Override
+    public void setIndividualId(IIdType individualId) {
+        this.individual.setId(individualId);
+    }
+
+    @Override
+    public void setPhenopacketId(IIdType phenopacketId) {
+        this.phenopacketId = phenopacketId;
+    }
+
+    @Override
+    public IIdType getPhenopacketId() {
+        return this.phenopacketId;
+    }
+
+
 }
