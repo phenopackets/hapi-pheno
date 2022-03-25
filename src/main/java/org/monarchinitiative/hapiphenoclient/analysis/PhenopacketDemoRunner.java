@@ -15,6 +15,7 @@ import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
@@ -50,6 +51,20 @@ public class PhenopacketDemoRunner {
     }
 
 
+    public Bundle searchForPatient(IIdType id) {
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        Bundle response = client.search()
+                .forResource(Patient.class)
+                .where(Resource.RES_ID.exactly().code(id.getIdPart()))
+                .returnBundle(Bundle.class)
+                .execute();
+        IParser parser = ctx.newJsonParser();
+        parser.setPrettyPrint(true);
+        System.out.println(parser.encodeResourceToString(response));
+        return response;
+    }
+
+
     public Parameters searchForPhenopacketEverything(IIdType id) {
         org.hl7.fhir.r4.model.DateType dtBeg = new DateType("2019-11-01");
         org.hl7.fhir.r4.model.DateType dtEnd = new DateType("2023-02-02");
@@ -74,8 +89,6 @@ public class PhenopacketDemoRunner {
         Bundle response = client.search()
                 .forResource(Phenopacket.class)
                 .where(Resource.RES_ID.exactly().code(id.getIdPart()))
-                .include(new Include("Phenopacket/$everything"))
-                .include(new Include("Observation/$everything"))
                 .returnBundle(Bundle.class)
                 .execute();
         IParser parser = ctx.newJsonParser();
@@ -272,5 +285,19 @@ public class PhenopacketDemoRunner {
     }
 
 
+    /*
+    List<Bundle.BundleEntryComponent> entries = patientBundle.getEntry();
+        for (var entry : entries) {
+            if (entry.getResource() instanceof Patient) {
+                Patient patient = (Patient) entry.getResource();
+     */
 
+    public Individual extractIndividual(String individualId) {
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
+        Individual indi = client.read().resource(Individual.class).withId(individualId).execute();
+        if (indi == null) {
+            throw new PhenoClientRuntimeException("Could not retrieve individual with id "+ individualId);
+        }
+        return indi;
+    }
 }

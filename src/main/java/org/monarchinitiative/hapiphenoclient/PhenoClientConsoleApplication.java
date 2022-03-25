@@ -1,12 +1,17 @@
 package org.monarchinitiative.hapiphenoclient;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Patient;
 import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner;
 import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
-import org.monarchinitiative.hapiphenoclient.ga4gh.IndividualFactory;
+import org.monarchinitiative.hapiphenoclient.ga4gh.Ga4GhPhenopacket;
+import org.monarchinitiative.hapiphenoclient.ga4gh.IndividualTransformer;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
+import org.phenopackets.schema.v2.Phenopacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,26 +46,18 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
         System.out.println("Retrieving phenopacket " + bethlem.getPhenopacketId().getIdPart());
         Bundle patientBundle = demoRunner.searchForPhenopacketById(bethlem.getPhenopacketId());
         System.out.println(patientBundle);
-        List<Bundle.BundleEntryComponent> entries = patientBundle.getEntry();
-        for (var entry : entries) {
-            System.out.println("Entry" + entry);
-            if (entry.getResource() instanceof Patient) {
-                Patient patient = (Patient) entry.getResource();
-                org.phenopackets.schema.v2.core.Individual ga4ghIndividual = IndividualFactory.toGa4gh(patient);
-                System.out.println("FHIR Patient: " + patient.getId());
-                System.out.println(ga4ghIndividual);
-            }
-        }
         System.out.println("*************************");
-        // get the PhenotypicFeature elements
+        Individual individual = demoRunner.extractIndividual(bethlem.getUnqualifiedIndidualId());
         List<PhenotypicFeature> features = demoRunner.retrievePhenotypicFeaturesFromBundle(patientBundle);
-        for (PhenotypicFeature phenotypicFeature : features) {
-            System.out.println("PF" + phenotypicFeature);
-        }
         List<Measurement> measurements = demoRunner.retrieveMeasurementsFromBundle(patientBundle);
-        for (Measurement measurement : measurements) {
-            System.out.println("Measurment" + measurement);
+        Phenopacket ga4ghPhenopacket = Ga4GhPhenopacket.fromFhir(individual, features, measurements);
+        try {
+            String json = JsonFormat.printer().print(ga4ghPhenopacket);
+            System.out.println(json);
+        } catch (InvalidProtocolBufferException ipe) {
+            ipe.printStackTrace();
         }
+
     }
 
 

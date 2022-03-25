@@ -20,6 +20,7 @@ public interface PhenoExample {
     void setPhenopacketId(IIdType phenopacketId);
 
     IIdType getPhenopacketId();
+    String getUnqualifiedIndidualId();
 
 
 

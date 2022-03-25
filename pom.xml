@@ -21,12 +21,14 @@
 
 
     <artifactId>hapi-pheno-client</artifactId>
-    <version>0.1.4</version>
+    <version>0.2.1</version>
 
     <properties>
         <java.version>11</java.version>
         <spring_boot_version>2.3.4.RELEASE</spring_boot_version>
         <hapi.version>5.6.2</hapi.version>
+        <protobuf.version>3.14.0</protobuf.version>
+
     </properties>
 
     <prerequisites>
@@ -72,7 +74,22 @@
             <artifactId>spring-boot-starter</artifactId>
             <version>2.6.3</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <version>${protobuf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- HAPI-FHIR uses Logback for logging support. The logback library is included automatically by Maven as a part of the hapi-fhir-base dependency, but you also need to include a logging library. Logback
             is used here, but log4j would also be fine. -->
