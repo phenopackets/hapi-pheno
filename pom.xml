@@ -21,13 +21,13 @@
 
 
     <artifactId>hapi-pheno-client</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.3</version>
 
     <properties>
         <java.version>11</java.version>
         <spring_boot_version>2.3.4.RELEASE</spring_boot_version>
         <hapi.version>5.6.2</hapi.version>
-        <protobuf.version>3.14.0</protobuf.version>
+        <protobuf.version>3.16.1</protobuf.version>
 
     </properties>
 

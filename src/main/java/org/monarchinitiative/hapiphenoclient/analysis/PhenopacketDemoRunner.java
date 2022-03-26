@@ -1,7 +1,6 @@
 package org.monarchinitiative.hapiphenoclient.analysis;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.Include;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
@@ -15,10 +14,7 @@ import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
+import org.monarchinitiative.hapiphenoclient.phenopacket.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -281,6 +277,13 @@ public class PhenopacketDemoRunner {
             measurementSection.addEntry(new Reference(measurement));
             client.update().resource(phenopacket).execute();
         }
+        PhenopacketsVariant variant = bethlem.createPhenopacketsVariant();
+        IParser parser = ctx.newJsonParser();
+        parser.setPrettyPrint(true);
+        System.out.println(parser.encodeResourceToString(variant));
+        //IIdType variantId = postResource(variant);
+        PhenopacketsGenomicInterpretation genomicInterpretation = bethlem.addGenomicInterpretation(variant);
+        System.out.println(parser.encodeResourceToString(genomicInterpretation));
         return bethlem;
     }
 

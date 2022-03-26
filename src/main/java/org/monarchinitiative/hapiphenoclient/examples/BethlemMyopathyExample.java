@@ -75,16 +75,6 @@ public class BethlemMyopathyExample implements PhenoExample {
         this.phenopacket.setTitle("Phenopacket: Bethlem Myopathy");
         phenopacket.setId("example.id");
         return phenopacket;
-
-        /*
-
-Composition composition = new Composition();
-composition.setId("COMPOSITION-ABC");
-composition.setSubject(new Reference("Patient/PATIENT-ABC"));
-composition.addSection().setFocus(new Reference("Observation/OBSERVATION-ABC"));
-client.update().resource(composition).execute();
-
-         */
     }
 
 
@@ -143,15 +133,30 @@ client.update().resource(composition).execute();
     }
 
 
-
-    PhenopacketsVariant createPhenopacketsVariant() {
+    /**
+     * NM_001848.3:c.877G>A 	NM_001848.3
+     * NP_001839.2:p.(Gly293Arg) 	NP_001839.2
+     * GRCh38:21:45989626:G:A
+     * COL6A1, HGNC:2211
+     * heterozygous
+     * 21q22.3
+     * @return A {@link PhenopacketsVariant} object representing NM_001848.3:c.877G>A
+     */
+    @Override
+    public PhenopacketsVariant createPhenopacketsVariant() {
         PhenopacketsVariant phenopacketsVariant = new PhenopacketsVariant();
-        // add * component[gene-studied].valueCodeableConcept.coding = HGNC#HGNC:3477 "ETF1"
-
-
-
+        phenopacketsVariant.setGeneStudied(2211, "COL6A1");
+        phenopacketsVariant.setHeterozygous();
+        phenopacketsVariant.setHg38ReferenceAssembly();
+        phenopacketsVariant.chromosome21();
+        phenopacketsVariant.setGenomicRefAllele("G");
+        phenopacketsVariant.setGenomicAltAllele("A");
+        phenopacketsVariant.setExactStartEnd(45989626,45989626);
+        phenopacketsVariant.oneBasedCoordinateSystem();
+        phenopacketsVariant.setVariationCode("NM_001848.3:c.877G>A", "NP_001839.2:p.(Gly293Arg)");
+        phenopacketsVariant.setStatus(Observation.ObservationStatus.FINAL);
+        phenopacketsVariant.setPatientId(getUnqualifiedIndidualId());
         return phenopacketsVariant;
-
     }
 
 
@@ -179,5 +184,12 @@ client.update().resource(composition).execute();
         return this.phenopacketId;
     }
 
-
+    @Override
+    public PhenopacketsGenomicInterpretation addGenomicInterpretation(PhenopacketsVariant variant) {
+        PhenopacketsGenomicInterpretation genomicInterpretation = new PhenopacketsGenomicInterpretation();
+        genomicInterpretation.setPatientId(getUnqualifiedIndidualId());
+        genomicInterpretation.causativeStatus();
+        genomicInterpretation.addResult(variant);
+        return genomicInterpretation;
+    }
 }
