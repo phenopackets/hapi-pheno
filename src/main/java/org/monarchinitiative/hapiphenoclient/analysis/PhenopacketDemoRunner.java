@@ -282,7 +282,9 @@ public class PhenopacketDemoRunner {
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
         System.out.println(parser.encodeResourceToString(variant));
-        IIdType variantId = postResource(variant);
+        //IIdType variantId = postResource(variant);
+        PhenopacketsGenomicInterpretation genomicInterpretation = bethlem.addGenomicInterpretation(variant);
+        System.out.println(parser.encodeResourceToString(genomicInterpretation));
         return bethlem;
     }
 

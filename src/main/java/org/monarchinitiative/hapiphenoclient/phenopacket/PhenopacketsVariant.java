@@ -37,16 +37,22 @@ public class PhenopacketsVariant extends Observation {
 
     /**
      * The constructor sets of the code of this profiled Observation to be a LOINC genetic variant assessment
-     * and sets the category as laboratory.
+     * and sets the category as laboratory, and the value as present.
      */
     public PhenopacketsVariant() {
         CodeableConcept cc = new CodeableConcept();
         cc.addCoding().setSystem("http://terminology.hl7.org/CodeSystem/observation-category").setCode("laboratory");
+        addCategory(cc);
         Coding coding = new Coding();
         coding.setSystem(LOINC_SYSTEM)
                 .setCode(LOINC_GENETIC_VARIANT_ASSESSMENT_ID)
                 .setDisplay(LOINC_GENETIC_VARIANT_ASSESSMENT_DISPLAY);
         setCode( new CodeableConcept().addCoding(coding));
+        //valueCodeableConcept = LNC#LA9633-4 "Present"
+        CodeableConcept presentCC = new CodeableConcept();
+        presentCC.addCoding(new Coding().setCode("LA9633-4").setDisplay("Present").setSystem(LOINC_SYSTEM));
+        setValue(presentCC);
+
     }
 
 

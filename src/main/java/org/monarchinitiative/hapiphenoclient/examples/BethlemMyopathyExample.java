@@ -184,5 +184,12 @@ public class BethlemMyopathyExample implements PhenoExample {
         return this.phenopacketId;
     }
 
-
+    @Override
+    public PhenopacketsGenomicInterpretation addGenomicInterpretation(PhenopacketsVariant variant) {
+        PhenopacketsGenomicInterpretation genomicInterpretation = new PhenopacketsGenomicInterpretation();
+        genomicInterpretation.setPatientId(getUnqualifiedIndidualId());
+        genomicInterpretation.causativeStatus();
+        genomicInterpretation.addResult(variant);
+        return genomicInterpretation;
+    }
 }

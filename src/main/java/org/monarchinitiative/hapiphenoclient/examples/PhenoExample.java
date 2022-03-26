@@ -2,6 +2,7 @@ package org.monarchinitiative.hapiphenoclient.examples;
 
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
+import org.monarchinitiative.hapiphenoclient.phenopacket.PhenopacketsGenomicInterpretation;
 import org.monarchinitiative.hapiphenoclient.phenopacket.PhenopacketsVariant;
 
 /**
@@ -23,6 +24,7 @@ public interface PhenoExample {
     IIdType getPhenopacketId();
     String getUnqualifiedIndidualId();
     PhenopacketsVariant createPhenopacketsVariant();
+    PhenopacketsGenomicInterpretation addGenomicInterpretation(PhenopacketsVariant variant);
 
 
 
