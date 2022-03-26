@@ -56,7 +56,7 @@ public class PhenopacketsGenomicInterpretation extends DiagnosticReport {
     /**
      * We are adding a reference to a {@link PhenopacketsVariant} object, such as
      *   <reference value="Observation/PhenopacketsVariantExample01"/>
-     * @param variant
+     * @param variant A {@link PhenopacketsVariant} object representing a pathogenic variant
      */
     public void addResult(PhenopacketsVariant variant) {
         String refValue = "Observation/" + variant.getId();

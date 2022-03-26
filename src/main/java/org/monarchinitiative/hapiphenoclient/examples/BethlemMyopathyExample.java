@@ -140,7 +140,7 @@ public class BethlemMyopathyExample implements PhenoExample {
      * COL6A1, HGNC:2211
      * heterozygous
      * 21q22.3
-     * @return
+     * @return A {@link PhenopacketsVariant} object representing NM_001848.3:c.877G>A
      */
     @Override
     public PhenopacketsVariant createPhenopacketsVariant() {

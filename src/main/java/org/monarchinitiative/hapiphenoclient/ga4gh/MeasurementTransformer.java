@@ -4,8 +4,6 @@ import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Type;
 import org.phenopackets.schema.v2.core.*;
 
-import java.math.BigDecimal;
-
 public class MeasurementTransformer {
 
     public static Measurement toGa4gh(org.monarchinitiative.hapiphenoclient.phenopacket.Measurement fhirMeasurement) {

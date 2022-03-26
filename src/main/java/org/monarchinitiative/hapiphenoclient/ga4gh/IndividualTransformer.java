@@ -1,6 +1,5 @@
 package org.monarchinitiative.hapiphenoclient.ga4gh;
 
-import org.hl7.fhir.r4.model.Patient;
 import org.phenopackets.schema.v2.core.*;
 
 
