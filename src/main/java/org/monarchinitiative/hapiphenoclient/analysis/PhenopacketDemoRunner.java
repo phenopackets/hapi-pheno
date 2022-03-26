@@ -15,10 +15,7 @@ import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
+import org.monarchinitiative.hapiphenoclient.phenopacket.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -281,6 +278,11 @@ public class PhenopacketDemoRunner {
             measurementSection.addEntry(new Reference(measurement));
             client.update().resource(phenopacket).execute();
         }
+        PhenopacketsVariant variant = bethlem.createPhenopacketsVariant();
+        IParser parser = ctx.newJsonParser();
+        parser.setPrettyPrint(true);
+        System.out.println(parser.encodeResourceToString(variant));
+        IIdType variantId = postResource(variant);
         return bethlem;
     }
 

@@ -3,7 +3,6 @@ package org.monarchinitiative.hapiphenoclient.phenopacket;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import org.apache.commons.lang3.NotImplementedException;
 import org.hl7.fhir.r4.model.*;
-import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
 
 @ResourceDef(
         profile="https://github.com/phenopackets/core-ig/StructureDefinition/PhenopacketsVariant")
@@ -28,6 +27,27 @@ public class PhenopacketsVariant extends Observation {
     private static final String HGVS_SYSTEM = "http://www.hgvs.org/";
     private static final String LOINC_DISCRETE_GENETIC_VARIANT_ID = "81252-9";
     private static final String LOINC_DISCRETE_GENETIC_VARIANT_DISPLAY = "Discrete genetic variant";
+    private static final String FHIR_GENOMICS_REPORTING_SYSTEM = "http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes/";
+    private static final String SEQUENCE_ONTOLOGY_SYSTEM = "http://www.sequenceontology.org/";
+    private static final String LOINC_ALLELIC_STATE_ID = "53034-5";
+    private static final String LOINC_ALLELIC_STATE_DISPLAY = "Allelic state";
+    private static final String GENO_ONTOLOGY_SYSTEM = "http://www.ebi.ac.uk/ols/ontologies/geno";
+    private static final String LOINC_GENETIC_VARIANT_ASSESSMENT_ID = "69548-6";
+    private static final String LOINC_GENETIC_VARIANT_ASSESSMENT_DISPLAY = "Genetic variant assessment";
+
+    /**
+     * The constructor sets of the code of this profiled Observation to be a LOINC genetic variant assessment
+     * and sets the category as laboratory.
+     */
+    public PhenopacketsVariant() {
+        CodeableConcept cc = new CodeableConcept();
+        cc.addCoding().setSystem("http://terminology.hl7.org/CodeSystem/observation-category").setCode("laboratory");
+        Coding coding = new Coding();
+        coding.setSystem(LOINC_SYSTEM)
+                .setCode(LOINC_GENETIC_VARIANT_ASSESSMENT_ID)
+                .setDisplay(LOINC_GENETIC_VARIANT_ASSESSMENT_DISPLAY);
+        setCode( new CodeableConcept().addCoding(coding));
+    }
 
 
 
@@ -132,18 +152,83 @@ public class PhenopacketsVariant extends Observation {
         cc.addCoding(chromosomeCoding);
         ObservationComponentComponent occ = new ObservationComponentComponent();
         occ.setCode(cytogeneticCodeableConcept);
-        occ.setValue(chromosomeCoding);
+        occ.setValue(cc);
         this.addComponent(occ);
     }
 
-    public void setChromosome(String chr) {
-        switch (chr) {
-            case "10":
-            case "chr10" : setCytogeneticLocation("LNC#LA21263-1", "10");
-            break;
-            default:
-                throw new PhenoClientRuntimeException("Could not find chromosome " + chr);
-        }
+    public void chromosome1() {
+        setCytogeneticLocation("LA21254-0", "1");
+    }
+    public void chromosome2() {
+        setCytogeneticLocation("LA21255-7", "2");
+    }
+    public void chromosome3() {
+        setCytogeneticLocation("LA21256-5", "3");
+    }
+    public void chromosome4() {
+        setCytogeneticLocation("LA21257-3", "4");
+    }
+    public void chromosome5() {
+        setCytogeneticLocation("LA21258-1", "5");
+    }
+    public void chromosome6() {
+        setCytogeneticLocation("LA21259-9", "6");
+    }
+    public void chromosome7() {
+        setCytogeneticLocation("LA21260-7", "7");
+    }
+    public void chromosome8() {
+        setCytogeneticLocation("LA21261-5", "8");
+    }
+    public void chromosome9() {
+        setCytogeneticLocation("LA21262-3", "9");
+    }
+    public void chromosome10() {
+        setCytogeneticLocation("LA21263-1", "10");
+    }
+
+    public void chromosome11() {
+        setCytogeneticLocation("LA21264-9", "11");
+    }
+    public void chromosome12() {
+        setCytogeneticLocation("LA21265-6", "12");
+    }
+    public void chromosome13() {
+        setCytogeneticLocation("LA21266-4", "13");
+    }
+    public void chromosome14() {
+        setCytogeneticLocation("LA21267-2", "14");
+    }
+    public void chromosome15() {
+        setCytogeneticLocation("LA21268-0", "15");
+    }
+    public void chromosome16() {
+        setCytogeneticLocation("LA21269-8", "16");
+    }
+    public void chromosome17() {
+        setCytogeneticLocation("LA21270-6", "17");
+    }
+    public void chromosome18() {
+        setCytogeneticLocation("LA21271-4", "18");
+    }
+    public void chromosome19() {
+        setCytogeneticLocation("LA21272-2", "19");
+    }
+
+    public void chromosome20() {
+        setCytogeneticLocation("LA21273-0", "20");
+    }
+    public void chromosome21() {
+        setCytogeneticLocation("LA21274-8", "21");
+    }
+    public void chromosome22() {
+        setCytogeneticLocation("LA21275-5", "22");
+    }
+    public void chromosomeX() {
+        setCytogeneticLocation("LA21276-3", "X");
+    }
+    public void chromosomeY() {
+        setCytogeneticLocation("LA21277-1", "Y");
     }
 
     /**
@@ -224,7 +309,7 @@ public class PhenopacketsVariant extends Observation {
     }
 
 
-    public void setOneBasedCoordinateSystem() {
+    public void oneBasedCoordinateSystem() {
         setCoordinateSystem("LA30102-0", "1-based character counting");
     }
 
@@ -326,6 +411,91 @@ public class PhenopacketsVariant extends Observation {
         this.addComponent(occ);
     }
 
+    /**
+     *  <component>
+     *     <code>
+     *       <coding>
+     *         <system
+     *                 value="http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes"/>
+     *         <code value="functional-annotation"/>
+     *       </coding>
+     *     </code>
+     *     <valueCodeableConcept>
+     *       <coding>
+     *         <system value="http://www.sequenceontology.org/"/>
+     *         <code value="0001878"/>
+     *         <display value="feature_variant (SO:0001878)"/>
+     *       </coding>
+     *     </valueCodeableConcept>
+     *   </component>
+     */
+    public void setFunctionalAnnotation(String codeValue, String display) {
+        Coding functionalAnnotationCoding = new Coding();
+        functionalAnnotationCoding.setSystem(FHIR_GENOMICS_REPORTING_SYSTEM).setCode("functional-annotation");
+
+        CodeableConcept loincGenomicCoordinateSystemCC = new CodeableConcept().addCoding(functionalAnnotationCoding);
+        ObservationComponentComponent occ = new ObservationComponentComponent();
+        occ.setCode(loincGenomicCoordinateSystemCC);
+        Coding sequenceOntologyCoding = new Coding();
+        sequenceOntologyCoding.setSystem(SEQUENCE_ONTOLOGY_SYSTEM)
+                .setCode(codeValue)
+                .setDisplay(display);
+        CodeableConcept cc = new CodeableConcept();
+        cc.addCoding(sequenceOntologyCoding);
+        occ.setValue(cc);
+        this.addComponent(occ);
+    }
+
+    /**
+     * <component>
+     *     <code>
+     *       <coding>
+     *         <system value="http://loinc.org"/>
+     *         <code value="53034-5"/>
+     *       </coding>
+     *     </code>
+     *     <valueCodeableConcept>
+     *       <coding>
+     *         <system value="http://www.ebi.ac.uk/ols/ontologies/geno"/>
+     *         <code value="0000135"/>
+     *         <display value="Heterozygous"/>
+     *       </coding>
+     *     </valueCodeableConcept>
+     *   </component>
+     */
+    public void setAllelicState(String codeValue, String display) {
+        Coding loincAllelicStateCoding = new Coding();
+        loincAllelicStateCoding.setSystem(LOINC_SYSTEM)
+                .setCode(LOINC_ALLELIC_STATE_ID)
+                .setDisplay(LOINC_ALLELIC_STATE_DISPLAY);
+
+        CodeableConcept loincAllelicStateCC = new CodeableConcept().addCoding(loincAllelicStateCoding);
+        ObservationComponentComponent occ = new ObservationComponentComponent();
+        occ.setCode(loincAllelicStateCC);
+        Coding sequenceOntologyCoding = new Coding();
+        sequenceOntologyCoding.setSystem(GENO_ONTOLOGY_SYSTEM)
+                .setCode(codeValue)
+                .setDisplay(display);
+        CodeableConcept cc = new CodeableConcept();
+        cc.addCoding(sequenceOntologyCoding);
+        occ.setValue(cc);
+        this.addComponent(occ);
+    }
+
+    public void setHeterozygous() {
+        setAllelicState("GENO:0000135", "heterozygous");
+    }
+
+    public void setHomozygous() {
+        setAllelicState("GENO:0000136", "homozygous");
+    }
+
+    public void setHemizygous() {
+        setAllelicState("GENO:0000134", "hemizygous");
+    }
+
+
+
     public void setExactStartEnd(int start, int end) {
         //exact-start-end
         Range valueRange = new Range();
@@ -338,7 +508,7 @@ public class PhenopacketsVariant extends Observation {
     }
 
 
-
-
-
+    public void setPatientId(String unqualifiedIndidualId) {
+         setSubject(new Reference( "Patient/"+unqualifiedIndidualId ));
+    }
 }
