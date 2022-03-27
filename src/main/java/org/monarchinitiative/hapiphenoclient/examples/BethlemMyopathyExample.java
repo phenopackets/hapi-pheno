@@ -145,6 +145,7 @@ public class BethlemMyopathyExample implements PhenoExample {
     @Override
     public PhenopacketsVariant createPhenopacketsVariant() {
         PhenopacketsVariant phenopacketsVariant = new PhenopacketsVariant();
+        phenopacketsVariant.setId("COL6A1.variant.1");
         phenopacketsVariant.setGeneStudied(2211, "COL6A1");
         phenopacketsVariant.setHeterozygous();
         phenopacketsVariant.setHg38ReferenceAssembly();
@@ -156,6 +157,10 @@ public class BethlemMyopathyExample implements PhenoExample {
         phenopacketsVariant.setVariationCode("NM_001848.3:c.877G>A", "NP_001839.2:p.(Gly293Arg)");
         phenopacketsVariant.setStatus(Observation.ObservationStatus.FINAL);
         phenopacketsVariant.setPatientId(getUnqualifiedIndidualId());
+        phenopacketsVariant.acmgPathogenic();
+        phenopacketsVariant.actionable();
+        phenopacketsVariant.vrsObject("VrsObject Example");
+        phenopacketsVariant.genomicMolecularContext();
         return phenopacketsVariant;
     }
 

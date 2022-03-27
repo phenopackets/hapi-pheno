@@ -165,16 +165,16 @@ public class PhenopacketDemoRunner {
 
 
 
-    public IIdType postResource(Resource pfeature) {
-        LOG.info("Posting resource={}", pfeature);
+    public IIdType postResource(Resource resource) {
+        LOG.info("Posting resource={}", resource);
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
-       // System.out.println(parser.encodeResourceToString(pfeature));
+       // System.out.println(parser.encodeResourceToString(resource));
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         try {
             MethodOutcome outcome = client
                     .create()
-                    .resource(pfeature)
+                    .resource(resource)
                     .execute();
             System.out.println(outcome.getId());
             return outcome.getId();
@@ -182,7 +182,7 @@ public class PhenopacketDemoRunner {
             //404 means we can contact the server but the server does not have
             // the resource we want or does not want to disclose the information
             //int code = e.getStatusCode();
-            String msg = String.format("Could not create individal: %s\n", e.getMessage());
+            String msg = String.format("Could not create resource (%s): %s\n", resource.toString(), e.getMessage());
             throw new PhenoClientRuntimeException(msg);
         }
     }
@@ -281,7 +281,7 @@ public class PhenopacketDemoRunner {
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
         System.out.println(parser.encodeResourceToString(variant));
-        //IIdType variantId = postResource(variant);
+        IIdType variantId = postResource(variant);
         PhenopacketsGenomicInterpretation genomicInterpretation = bethlem.addGenomicInterpretation(variant);
         System.out.println(parser.encodeResourceToString(genomicInterpretation));
         return bethlem;
