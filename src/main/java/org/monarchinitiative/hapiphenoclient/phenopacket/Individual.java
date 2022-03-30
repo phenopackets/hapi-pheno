@@ -12,7 +12,7 @@ public class Individual extends Patient {
     @Child(name = "karyotypicSex", type = KaryotypicSex.class, order = 2, min = 0, max = 1)
     @Extension(url = "https://github.com/phenopackets/core-ig/StructureDefinition/KaryotypicSex", definedLocally = true, isModifier = false)
     @Description(shortDefinition = "the chromosomal sex of an individual")
-    private KaryotypicSex karyotypicSex;
+    private KaryotypicSex karyotypicSex = null;
 
     public KaryotypicSex getKaryotypicSex() {
         if (karyotypicSex == null) {

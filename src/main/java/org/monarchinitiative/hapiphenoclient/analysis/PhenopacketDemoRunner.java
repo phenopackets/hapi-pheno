@@ -239,9 +239,9 @@ public class PhenopacketDemoRunner {
         bethlem.setIndividualId(individualId);
 
 
-        Phenopacket phenopacket = bethlem.phenopacket();
+        Phenopacket fhirPhenopacket = bethlem.phenopacket();
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        MethodOutcome methodOutcome = client.update().resource(phenopacket).execute();
+        MethodOutcome methodOutcome = client.update().resource(fhirPhenopacket).execute();
         if (methodOutcome.getId() == null) {
             throw new PhenoClientRuntimeException("Could not retrieve Phenopacket ID from server");
         }
@@ -255,12 +255,12 @@ public class PhenopacketDemoRunner {
                                 .addCoding(new Coding()
                                                 .setCode("phenotypic_features")
                                                 .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
-        phenopacket.addSection(phenotypicFeaturesSection);
+        fhirPhenopacket.addSection(phenotypicFeaturesSection);
         for (PhenotypicFeature pfeature : phenotypicFeatureList) {
             IIdType pfeatureId = postResource(pfeature);
             pfeature.setId(pfeatureId.getIdPart());
             phenotypicFeaturesSection.addEntry(new Reference(pfeature));
-            client.update().resource(phenopacket).execute();
+            client.update().resource(fhirPhenopacket).execute();
         }
         Composition.SectionComponent measurementSection =
                 new Composition.SectionComponent()
@@ -269,13 +269,13 @@ public class PhenopacketDemoRunner {
                                 .addCoding(new Coding()
                                         .setCode("measurements")
                                         .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
-        phenopacket.addSection(measurementSection);
+        fhirPhenopacket.addSection(measurementSection);
         List<Measurement> measurementList = bethlem.measurementList();
         for (Measurement measurement : measurementList) {
             IIdType measurementId = postResource(measurement);
             measurement.setId(measurementId.getIdPart());
             measurementSection.addEntry(new Reference(measurement));
-            client.update().resource(phenopacket).execute();
+            client.update().resource(fhirPhenopacket).execute();
         }
         PhenopacketsVariant variant = bethlem.createPhenopacketsVariant();
         IParser parser = ctx.newJsonParser();

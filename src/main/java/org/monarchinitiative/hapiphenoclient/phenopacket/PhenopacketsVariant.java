@@ -327,7 +327,6 @@ public class PhenopacketsVariant extends Observation {
     public void chromosome10() {
         setCytogeneticLocation("LA21263-1", "10");
     }
-
     public void chromosome11() {
         setCytogeneticLocation("LA21264-9", "11");
     }
@@ -355,7 +354,6 @@ public class PhenopacketsVariant extends Observation {
     public void chromosome19() {
         setCytogeneticLocation("LA21272-2", "19");
     }
-
     public void chromosome20() {
         setCytogeneticLocation("LA21273-0", "20");
     }
