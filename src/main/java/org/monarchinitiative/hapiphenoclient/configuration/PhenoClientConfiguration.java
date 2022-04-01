@@ -13,9 +13,6 @@ public class PhenoClientConfiguration {
     @Autowired
     ApplicationProperties applicationProperties;
 
-
-
-
     @Bean("version")
     public String getVersion() {
         return applicationProperties.getApplicationVersion();
@@ -25,12 +22,6 @@ public class PhenoClientConfiguration {
     public String getHapiUrl() {
         return applicationProperties.getHapiServerUrl();
     }
-
-    @Bean("igPath")
-    public Path igPath() {
-        return Path.of(applicationProperties.igPath());
-    }
-
 
 
 }

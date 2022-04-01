@@ -10,7 +10,6 @@ import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
-import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
@@ -37,6 +36,13 @@ public class PhenopacketDemoRunner {
 
     private final LoggingInterceptor loggingInterceptor;
 
+    /**
+     * This variable represents the clinical case for which we are making a Phenopacket
+     * and translating it back to GA4GH format. Each case has clinical information and
+     * a Genomic Interpretation.
+     */
+    private PhenoExample phenoExample = null;
+
     public PhenopacketDemoRunner() {
         ctx = FhirContext.forR4();
         String propFile = "classpath:narrative.properties";
@@ -45,6 +51,12 @@ public class PhenopacketDemoRunner {
         ctx.setNarrativeGenerator(gen);
         loggingInterceptor = new LoggingInterceptor(true);
     }
+
+    public void setPhenoExample(PhenoExample example) {
+        this.phenoExample = example;
+    }
+
+
 
 
     public Bundle searchForPatient(IIdType id) {
@@ -232,22 +244,27 @@ public class PhenopacketDemoRunner {
     }
 
 
-    public PhenoExample postBethlemClinicalExample() {
+    public void postClinicalExample() {
+        if (phenoExample == null) {
+            throw new PhenoClientRuntimeException("Cannot post example before it is initialized");
+        }
         prelims();
-        BethlemMyopathyExample bethlem = new BethlemMyopathyExample();
-        IIdType individualId = postResource(bethlem.individual());
-        bethlem.setIndividualId(individualId);
+
+        IIdType individualId = postResource(phenoExample.individual());
+        phenoExample.setIndividualId(individualId);
 
 
-        Phenopacket fhirPhenopacket = bethlem.phenopacket();
+        Phenopacket fhirPhenopacket = phenoExample.phenopacket();
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         MethodOutcome methodOutcome = client.update().resource(fhirPhenopacket).execute();
         if (methodOutcome.getId() == null) {
             throw new PhenoClientRuntimeException("Could not retrieve Phenopacket ID from server");
         }
         IIdType phnenopacketId = methodOutcome.getId();
-        bethlem.setPhenopacketId(phnenopacketId);
-        List<PhenotypicFeature> phenotypicFeatureList = bethlem.phenotypicFeatureList();
+        phenoExample.setPhenopacketId(phnenopacketId);
+        PhenopacketsVariant variant = phenoExample.createPhenopacketsVariant();
+        IIdType variantId = postResource(variant);
+        List<PhenotypicFeature> phenotypicFeatureList = phenoExample.phenotypicFeatureList();
         Composition.SectionComponent phenotypicFeaturesSection =
                 new Composition.SectionComponent()
                         .setTitle("phenotypic_features")
@@ -270,21 +287,20 @@ public class PhenopacketDemoRunner {
                                         .setCode("measurements")
                                         .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
         fhirPhenopacket.addSection(measurementSection);
-        List<Measurement> measurementList = bethlem.measurementList();
+        List<Measurement> measurementList = phenoExample.measurementList();
         for (Measurement measurement : measurementList) {
             IIdType measurementId = postResource(measurement);
             measurement.setId(measurementId.getIdPart());
             measurementSection.addEntry(new Reference(measurement));
             client.update().resource(fhirPhenopacket).execute();
         }
-        PhenopacketsVariant variant = bethlem.createPhenopacketsVariant();
+
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
         System.out.println(parser.encodeResourceToString(variant));
-        IIdType variantId = postResource(variant);
-        PhenopacketsGenomicInterpretation genomicInterpretation = bethlem.addGenomicInterpretation(variant);
+
+        PhenopacketsGenomicInterpretation genomicInterpretation = phenoExample.addGenomicInterpretation(variant);
         System.out.println(parser.encodeResourceToString(genomicInterpretation));
-        return bethlem;
     }
 
 
