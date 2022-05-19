@@ -21,7 +21,7 @@
 
 
     <artifactId>hapi-pheno-client</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.3</version>
 
     <properties>
         <java.version>11</java.version>

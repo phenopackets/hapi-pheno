@@ -73,7 +73,9 @@ public class BethlemMyopathyExample implements PhenoExample {
         this.phenopacket.setDate(new Date()); // current date/time
         this.phenopacket.addAuthor().setReference(williamHarvey.getReference()).setDisplay(williamHarvey.getDisplayName());
         this.phenopacket.setTitle("Phenopacket: Bethlem Myopathy");
-        phenopacket.setId("example.id");
+        Identifier identifier = new Identifier();
+        identifier.setSystem("http://acme.com").setValue("example.id");
+        phenopacket.setIdentifier(identifier);
         return phenopacket;
     }
 

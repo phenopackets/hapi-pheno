@@ -181,7 +181,7 @@ public class PhenopacketDemoRunner {
         LOG.info("Posting resource={}", resource);
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
-       // System.out.println(parser.encodeResourceToString(resource));
+       System.out.println(parser.encodeResourceToString(resource));
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         try {
             MethodOutcome outcome = client
@@ -256,13 +256,17 @@ public class PhenopacketDemoRunner {
 
         Phenopacket fhirPhenopacket = phenoExample.phenopacket();
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        MethodOutcome methodOutcome = client.update().resource(fhirPhenopacket).execute();
+        MethodOutcome methodOutcome = client.create().resource(fhirPhenopacket).execute();
         if (methodOutcome.getId() == null) {
             throw new PhenoClientRuntimeException("Could not retrieve Phenopacket ID from server");
         }
         IIdType phnenopacketId = methodOutcome.getId();
         phenoExample.setPhenopacketId(phnenopacketId);
         PhenopacketsVariant variant = phenoExample.createPhenopacketsVariant();
+
+        IParser parser = ctx.newJsonParser();
+        parser.setPrettyPrint(true);
+        System.out.println(parser.encodeResourceToString(variant));
         IIdType variantId = postResource(variant);
         List<PhenotypicFeature> phenotypicFeatureList = phenoExample.phenotypicFeatureList();
         Composition.SectionComponent phenotypicFeaturesSection =
@@ -295,9 +299,7 @@ public class PhenopacketDemoRunner {
             client.update().resource(fhirPhenopacket).execute();
         }
 
-        IParser parser = ctx.newJsonParser();
-        parser.setPrettyPrint(true);
-        System.out.println(parser.encodeResourceToString(variant));
+
 
         PhenopacketsGenomicInterpretation genomicInterpretation = phenoExample.addGenomicInterpretation(variant);
         System.out.println(parser.encodeResourceToString(genomicInterpretation));
