@@ -637,11 +637,20 @@ public class PhenopacketsVariant extends Observation {
 
     public void setExactStartEnd(int start, int end) {
         //exact-start-end
+        /*
+         CodeableConcept startEndCC = new CodeableConcept();
+        startEndCC.addCoding(new Coding().setCode("exact-start-end")
+                .setSystem("http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes"));
+         */
         Range valueRange = new Range();
         Quantity low = new Quantity().setValue(start);
         Quantity high = new Quantity().setValue(end);
         valueRange.setLow(low).setHigh(high);
         ObservationComponentComponent occ = new ObservationComponentComponent();
+        CodeableConcept startEndCC = new CodeableConcept();
+        startEndCC.addCoding(new Coding().setCode("exact-start-end")
+                .setSystem("http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes"));
+        occ.setCode(startEndCC);
         occ.setValue(valueRange);
         this.addComponent(occ);
     }

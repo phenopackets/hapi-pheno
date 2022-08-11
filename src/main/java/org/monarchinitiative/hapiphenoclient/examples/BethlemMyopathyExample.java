@@ -163,6 +163,24 @@ public class BethlemMyopathyExample implements PhenoExample {
         phenopacketsVariant.actionable();
         phenopacketsVariant.vrsObject("VrsObject Example");
         phenopacketsVariant.genomicMolecularContext();
+        /*
+         "code" : {
+        "coding" : [
+          {
+            "system" : "http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes",
+            "code" : "exact-start-end"
+          }
+        ]
+      },
+       CodeableConcept ga4ghType = new CodeableConcept();
+        ga4ghType.addCoding(
+                new Coding().setSystem(GA4GH_SYSTEM)
+                        .setCode(GA4GH_TYPE));
+         */
+        CodeableConcept startEndCC = new CodeableConcept();
+        startEndCC.addCoding(new Coding().setCode("exact-start-end")
+                .setSystem("http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes"));
+        //phenopacketsVariant
         return phenopacketsVariant;
     }
 
