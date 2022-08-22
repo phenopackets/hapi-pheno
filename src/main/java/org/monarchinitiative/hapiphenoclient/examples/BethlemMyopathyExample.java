@@ -37,7 +37,7 @@ public class BethlemMyopathyExample implements PhenoExample {
      * This method would then return "208"
      * @return the individual id (assigned by FHIR server) as string
      */
-    public String getUnqualifiedIndidualId() {
+    public String getUnqualifiedIndividualId() {
         return individual.getIdElement().toUnqualified().getIdPart();
     }
 
@@ -62,9 +62,10 @@ public class BethlemMyopathyExample implements PhenoExample {
     @Override
     public Phenopacket phenopacket() {
         this.phenopacket = new Phenopacket();
+        this.phenopacket.setIdentifier(new Identifier().setValue(phenopacketIdentifier));
         this.phenopacket.setIndividual(individual);
         this.phenopacket.setStatus(Composition.CompositionStatus.FINAL);
-        this.phenopacket.setSubject(new Reference("Patient/" + getUnqualifiedIndidualId()));
+        this.phenopacket.setSubject(new Reference("Patient/" + getUnqualifiedIndividualId()));
         CodeableConcept ga4ghType = new CodeableConcept();
         ga4ghType.addCoding(
                 new Coding().setSystem(GA4GH_SYSTEM)
@@ -73,18 +74,18 @@ public class BethlemMyopathyExample implements PhenoExample {
         this.phenopacket.setDate(new Date()); // current date/time
         this.phenopacket.addAuthor().setReference(williamHarvey.getReference()).setDisplay(williamHarvey.getDisplayName());
         this.phenopacket.setTitle("Phenopacket: Bethlem Myopathy");
-        phenopacket.setId("example.id");
+        this.phenopacket.setId("example.id");
         return phenopacket;
     }
 
 
     public List<PhenotypicFeature> phenotypicFeatureList() {
         List<PhenotypicFeature> features = new ArrayList<>();
-        PhenotypicFeature pf = PhenotypicFeature.createObservation("HP:0001558", "Decreased fetal movement", getUnqualifiedIndidualId());
+        PhenotypicFeature pf = PhenotypicFeature.createObservation("HP:0001558", "Decreased fetal movement", getUnqualifiedIndividualId());
         features.add(pf);
-        PhenotypicFeature pf2 = PhenotypicFeature.createObservation("HP:0011463", "Macroscopic hematuria", getUnqualifiedIndidualId());
+        PhenotypicFeature pf2 = PhenotypicFeature.createObservation("HP:0011463", "Macroscopic hematuria", getUnqualifiedIndividualId());
         features.add(pf2);
-        PhenotypicFeature pf3 = PhenotypicFeature.createObservation("HP:0001270", "Motor delay", getUnqualifiedIndidualId());
+        PhenotypicFeature pf3 = PhenotypicFeature.createObservation("HP:0001270", "Motor delay", getUnqualifiedIndividualId());
         features.add(pf3);
         return features;
     }
@@ -116,7 +117,7 @@ public class BethlemMyopathyExample implements PhenoExample {
         SimpleQuantity high = new SimpleQuantity();
         low.setValue(100).setSystem("http://unitsofmeasure.org").setCode("mg");
         measurement.getReferenceRangeFirstRep().setHigh(high);
-        measurement.setSubject(new Reference( "Patient/"+getUnqualifiedIndidualId()  ));
+        measurement.setSubject(new Reference( "Patient/"+getUnqualifiedIndividualId()  ));
 
         Reference perf = measurement.addPerformer();
         perf.setDisplay(williamHarvey.getDisplayName()).setReference(williamHarvey.getReference());
@@ -155,7 +156,7 @@ public class BethlemMyopathyExample implements PhenoExample {
         phenopacketsVariant.oneBasedCoordinateSystem();
         phenopacketsVariant.setVariationCode("NM_001848.3:c.877G>A", "NP_001839.2:p.(Gly293Arg)");
         phenopacketsVariant.setStatus(Observation.ObservationStatus.FINAL);
-        phenopacketsVariant.setPatientId(getUnqualifiedIndidualId());
+        phenopacketsVariant.setPatientId(getUnqualifiedIndividualId());
         return phenopacketsVariant;
     }
 
@@ -187,7 +188,7 @@ public class BethlemMyopathyExample implements PhenoExample {
     @Override
     public PhenopacketsGenomicInterpretation addGenomicInterpretation(PhenopacketsVariant variant) {
         PhenopacketsGenomicInterpretation genomicInterpretation = new PhenopacketsGenomicInterpretation();
-        genomicInterpretation.setPatientId(getUnqualifiedIndidualId());
+        genomicInterpretation.setPatientId(getUnqualifiedIndividualId());
         genomicInterpretation.causativeStatus();
         genomicInterpretation.addResult(variant);
         return genomicInterpretation;
