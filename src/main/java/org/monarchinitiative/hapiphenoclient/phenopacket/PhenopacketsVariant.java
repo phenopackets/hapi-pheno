@@ -9,7 +9,7 @@ import org.hl7.fhir.r4.model.*;
 public class PhenopacketsVariant extends Observation {
     private static final long serialVersionUID = 1L;
     private static final String HGNC_SYSTEM = "http://www.genenames.org/";
-    private static final String LOINC_SYSTEM = "http://loinc.org/";
+    private static final String LOINC_SYSTEM = "http://loinc.org";
     private static final String LOINC_CYTOGENETIC_CHROMOSOME_LOCATION_ID = "LOINC:48001-2";
     private static final String LOINC_CYTOGENETIC_CHROMOSOME_LOCATION_DISPLAY = "Cytogenetic (chromosome) location";
     /** LOINC code for Human reference sequence assembly version */
