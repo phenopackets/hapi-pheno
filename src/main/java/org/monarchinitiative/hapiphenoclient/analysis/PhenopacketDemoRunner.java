@@ -188,7 +188,7 @@ public class PhenopacketDemoRunner {
     }
 
 
-    private void prelims() {
+    private void postPractitioners() {
         MyPractitioner williamHarvey = MyPractitioner.harvey();
         Practitioner practitioner = new Practitioner();
         practitioner.setId(williamHarvey.getId());
@@ -233,12 +233,17 @@ public class PhenopacketDemoRunner {
 
 
     public PhenoExample postBethlemClinicalExample() {
-        prelims();
+
+        System.out.println("\nPUT practitioners");
+        postPractitioners();
+
+        System.out.println("\nPOST patient");
         BethlemMyopathyExample bethlem = new BethlemMyopathyExample();
         IIdType individualId = postResource(bethlem.individual());
         bethlem.setIndividualId(individualId);
 
 
+        System.out.println("\nPUT phenopacket/composition");
         Phenopacket fhirPhenopacket = bethlem.phenopacket();
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         MethodOutcome methodOutcome = client.update().resource(fhirPhenopacket).execute();
@@ -256,12 +261,16 @@ public class PhenopacketDemoRunner {
                                                 .setCode("phenotypic_features")
                                                 .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
         fhirPhenopacket.addSection(phenotypicFeaturesSection);
-        for (PhenotypicFeature pfeature : phenotypicFeatureList) {
+        int i=1;
+        for (PhenotypicFeature pfeature : phenotypicFeatureList) 
+            System.out.println("\nPOST observation PUT phenopacket/composition features " + i++);
             IIdType pfeatureId = postResource(pfeature);
             pfeature.setId(pfeatureId.getIdPart());
             phenotypicFeaturesSection.addEntry(new Reference(pfeature));
             client.update().resource(fhirPhenopacket).execute();
         }
+
+
         Composition.SectionComponent measurementSection =
                 new Composition.SectionComponent()
                         .setTitle("measurements")
@@ -271,23 +280,33 @@ public class PhenopacketDemoRunner {
                                         .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
         fhirPhenopacket.addSection(measurementSection);
         List<Measurement> measurementList = bethlem.measurementList();
+        i=1;
         for (Measurement measurement : measurementList) {
+            System.out.println("\nPOST measurement PUT phenopacket " + i++);
             IIdType measurementId = postResource(measurement);
             measurement.setId(measurementId.getIdPart());
             measurementSection.addEntry(new Reference(measurement));
             client.update().resource(fhirPhenopacket).execute();
         }
+
+
+// TODO
+        System.out.println("\n(TODO) POST variant");
         PhenopacketsVariant variant = bethlem.createPhenopacketsVariant();
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
+
+        System.out.println("\nShow local version of variant");
         System.out.println(parser.encodeResourceToString(variant));
         //IIdType variantId = postResource(variant);
+
+        System.out.println("\nShow local version of report on variant");
         PhenopacketsGenomicInterpretation genomicInterpretation = bethlem.addGenomicInterpretation(variant);
         System.out.println(parser.encodeResourceToString(genomicInterpretation));
         return bethlem;
     }
 
-
+// TODO: fetch patients from FHIR and show? ...using extractIndividual function below?
     /*
     List<Bundle.BundleEntryComponent> entries = patientBundle.getEntry();
         for (var entry : entries) {

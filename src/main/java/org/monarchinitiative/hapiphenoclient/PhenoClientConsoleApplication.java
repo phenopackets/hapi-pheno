@@ -40,15 +40,33 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         LOG.info("EXECUTING : command line runner");
+
+        // Create and post Bethlem data to FHIR server
         PhenoExample bethlem = demoRunner.postBethlemClinicalExample();
-        System.out.println("Retrieving phenopacket " + bethlem.getPhenopacketId().getIdPart());
+
+
+        // Retrieve packet from FHIR server
+        System.out.println("\nApp:Retrieving phenopacket " + bethlem.getPhenopacketId().getIdPart());
         Bundle patientBundle = demoRunner.searchForPhenopacketById(bethlem.getPhenopacketId());
         System.out.println(patientBundle);
+
+
+        // extract parts from FHIR Bundle & create Phenopacket
         System.out.println("*************************");
+        System.out.println("\nApp:Fetch Individual from FHIR server"); //, xtract parts and create Phenopacket ");
         Individual individual = demoRunner.extractIndividual(bethlem.getUnqualifiedIndividualId());
+        System.out.println("\nApp:Fetch Features from FHIR server"); //, xtract parts and create Phenopacket ");
         List<PhenotypicFeature> features = demoRunner.retrievePhenotypicFeaturesFromBundle(patientBundle);
+        System.out.println("\nApp:Fetch Measurements from FHIR server"); //, xtract parts and create Phenopacket ");
         List<Measurement> measurements = demoRunner.retrieveMeasurementsFromBundle(patientBundle);
+
+        // TODO: could you have retreived a bundle, or the whole (?) composition from the FHIR server with a single call?
+        // I don't know the structures well enough yet to ask.
+
+        System.out.println("\nCreate phenopacket protobuf");
         Phenopacket ga4ghPhenopacket = Ga4GhPhenopacket.fromFhir(individual, features, measurements);
+
+        System.out.println("\nApp:Show phenopacket contents");
         try {
             String json = JsonFormat.printer().print(ga4ghPhenopacket);
             System.out.println(json);
