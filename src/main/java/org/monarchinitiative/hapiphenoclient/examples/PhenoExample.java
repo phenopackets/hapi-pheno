@@ -22,7 +22,7 @@ public interface PhenoExample {
     void setPhenopacketId(IIdType phenopacketId);
 
     IIdType getPhenopacketId();
-    String getUnqualifiedIndidualId();
+    String getUnqualifiedIndividualId();
     PhenopacketsVariant createPhenopacketsVariant();
     PhenopacketsGenomicInterpretation addGenomicInterpretation(PhenopacketsVariant variant);
 

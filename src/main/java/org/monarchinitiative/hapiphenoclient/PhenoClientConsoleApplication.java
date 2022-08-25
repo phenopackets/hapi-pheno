@@ -45,7 +45,7 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
         Bundle patientBundle = demoRunner.searchForPhenopacketById(bethlem.getPhenopacketId());
         System.out.println(patientBundle);
         System.out.println("*************************");
-        Individual individual = demoRunner.extractIndividual(bethlem.getUnqualifiedIndidualId());
+        Individual individual = demoRunner.extractIndividual(bethlem.getUnqualifiedIndividualId());
         List<PhenotypicFeature> features = demoRunner.retrievePhenotypicFeaturesFromBundle(patientBundle);
         List<Measurement> measurements = demoRunner.retrieveMeasurementsFromBundle(patientBundle);
         Phenopacket ga4ghPhenopacket = Ga4GhPhenopacket.fromFhir(individual, features, measurements);

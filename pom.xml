@@ -31,6 +31,35 @@
 
     </properties>
 
+    <licenses>
+        <license>
+            <name>The 3-Clause BSD License</name>
+            <url>https://opensource.org/licenses/BSD-3-Clause</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Peter Robinson</name>
+            <email>peter.robinson@jax.org</email>
+            <organization>The Jackson Laboratory</organization>
+            <organizationUrl>https://www.jax.org/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Shahim Essaid</name>
+            <email></email>
+            <organization>University of Colorad Anschutz Medical Campus</organization>
+            <organizationUrl>http://medschool.cuanschutz.edu/dbmi</organizationUrl>
+        </developer>
+        <developer>
+            <name>Christophe Roeder</name>
+            <email>chris.roeder@cuanschutz.edu</email>
+            <organization>University of Colorad Anschutz Medical Campus</organization>
+            <organizationUrl>http://medschool.cuanschutz.edu/dbmi</organizationUrl>
+        </developer>
+    </developers>
+
     <prerequisites>
         <maven>3.6.3</maven>
     </prerequisites>
