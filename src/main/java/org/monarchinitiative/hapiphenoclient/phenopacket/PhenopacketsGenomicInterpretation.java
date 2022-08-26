@@ -11,7 +11,7 @@ import org.hl7.fhir.r4.model.*;
 public class PhenopacketsGenomicInterpretation extends DiagnosticReport {
     private static final long serialVersionUID = 1L;
 
-    private static final String LOINC_SYSTEM = "http://loinc.org/";
+    private static final String LOINC_SYSTEM = "http://loinc.org";
     private static final String LOINC_GENETIC_VARIANT_REPORTING_PANEL_ID = "81247-9";
     private static final String LOINC_GENETIC_VARIANT_REPORTING_PANEL_DISPLAY = "Master HL7 genetic variant reporting panel";
 
