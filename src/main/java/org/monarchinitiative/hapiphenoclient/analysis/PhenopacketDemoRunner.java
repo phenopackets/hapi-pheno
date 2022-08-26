@@ -163,17 +163,17 @@ public class PhenopacketDemoRunner {
 
 
 
-    public IIdType putResource(Resource r) {
-        LOG.info("Putting resource={}", r);
+    public IIdType putResource(Resource resourceArg) {
+        LOG.info("Putting resource={}", resourceArg);
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
-       // System.out.println(parser.encodeResourceToString(pfeature));
+       // System.out.println(parser.encodeResourceToString(resourceArg));
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
 
         try {
             MethodOutcome methodOutcome = client
                     .update()
-                    .resource(r)
+                    .resource(resourceArg)
                     .execute();
             System.out.println("putResource() returned Id:" + methodOutcome.getId());
             return methodOutcome.getId();
