@@ -1,9 +1,9 @@
 package org.monarchinitiative.hapiphenoclient.examples;
 
 import org.hl7.fhir.instance.model.api.IIdType;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenopacketsGenomicInterpretation;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenopacketsVariant;
+import org.monarchinitiative.hapiphenoclient.phenopacket.*;
+
+import java.util.List;
 
 /**
  * Create an examples to demonstrate how to
@@ -16,6 +16,8 @@ public interface PhenoExample {
 
     Phenopacket phenopacket();
 
+    Individual individual();
+
     Phenopacket modifyPhenopacket(Phenopacket p);
 
     void setIndividualId(IIdType individualId);
@@ -25,6 +27,9 @@ public interface PhenoExample {
     String getUnqualifiedIndividualId();
     PhenopacketsVariant createPhenopacketsVariant();
     PhenopacketsGenomicInterpretation addGenomicInterpretation(PhenopacketsVariant variant);
+
+    List<PhenotypicFeature> phenotypicFeatureList();
+    List<Measurement> measurementList();
 
 
 

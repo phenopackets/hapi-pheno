@@ -9,6 +9,10 @@ HAPI FHIR JPA starter project that has been modified to ingest the Phenopacket I
 By default it will start a server on localhost:8888, which is the location that this
 client application will target by default.
 
-The location of the core-ig needs to be added to the application.properties file, 
-and for now, the jar rebuilt.
-./src/main/resources/application.properties
+
+## Testing
+
+
+java -Xmx8G -jar validator_cli.jar myVariant.json -extension any -html-output MYVAR.html -version 4.0.1 -ig hl7.fhir.us.ga4gh.phenopacket#0.1.0
+
+

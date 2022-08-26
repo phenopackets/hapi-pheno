@@ -75,7 +75,11 @@ public class BethlemMyopathyExample implements PhenoExample {
         this.phenopacket.setDate(new Date()); // current date/time
         this.phenopacket.addAuthor().setReference(williamHarvey.getReference()).setDisplay(williamHarvey.getDisplayName());
         this.phenopacket.setTitle("Phenopacket: Bethlem Myopathy");
+// TODO: cleanup
         this.phenopacket.setId("example.id");
+        Identifier identifier = new Identifier();
+        identifier.setSystem("http://acme.com").setValue("example.id");
+        phenopacket.setIdentifier(identifier);
         return phenopacket;
     }
 
@@ -147,6 +151,7 @@ public class BethlemMyopathyExample implements PhenoExample {
     @Override
     public PhenopacketsVariant createPhenopacketsVariant() {
         PhenopacketsVariant phenopacketsVariant = new PhenopacketsVariant();
+        phenopacketsVariant.setId("COL6A1.variant.1");
         phenopacketsVariant.setGeneStudied(2211, "COL6A1");
         phenopacketsVariant.setHeterozygous();
         phenopacketsVariant.setHg38ReferenceAssembly();
@@ -157,7 +162,32 @@ public class BethlemMyopathyExample implements PhenoExample {
         phenopacketsVariant.oneBasedCoordinateSystem();
         phenopacketsVariant.setVariationCode("NM_001848.3:c.877G>A", "NP_001839.2:p.(Gly293Arg)");
         phenopacketsVariant.setStatus(Observation.ObservationStatus.FINAL);
+
         phenopacketsVariant.setPatientId(getUnqualifiedIndividualId());
+
+        phenopacketsVariant.setPatientId(getUnqualifiedIndidualId());
+        phenopacketsVariant.acmgPathogenic();
+        phenopacketsVariant.actionable();
+        phenopacketsVariant.vrsObject("VrsObject Example");
+        phenopacketsVariant.genomicMolecularContext();
+        /*
+         "code" : {
+        "coding" : [
+          {
+            "system" : "http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes",
+            "code" : "exact-start-end"
+          }
+        ]
+      },
+       CodeableConcept ga4ghType = new CodeableConcept();
+        ga4ghType.addCoding(
+                new Coding().setSystem(GA4GH_SYSTEM)
+                        .setCode(GA4GH_TYPE));
+         */
+        CodeableConcept startEndCC = new CodeableConcept();
+        startEndCC.addCoding(new Coding().setCode("exact-start-end")
+                .setSystem("http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes"));
+        //phenopacketsVariant
         return phenopacketsVariant;
     }
 
