@@ -4,6 +4,7 @@ import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
 import org.monarchinitiative.hapiphenoclient.phenopacket.*;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket; // not a org.phenopackets.schema.v2.Phenopacket!!!!
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
