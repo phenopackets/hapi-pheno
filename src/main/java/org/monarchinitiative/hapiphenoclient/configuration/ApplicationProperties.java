@@ -10,15 +10,14 @@ public class ApplicationProperties {
 
     private final String hapiServerUrl;
     private final String applicationVersion;
-    private final String igPath;
+    //private final String igPath;
 
     @Autowired
     public ApplicationProperties(@Value("${hapi.server}") String serverUrl,
-                                 @Value("${application.version}") String version,
-                                @Value("${ig.path}") String fhirIgPath) {
+                                 @Value("${application.version}") String version) {
         this.hapiServerUrl = serverUrl;
         this.applicationVersion = version;
-        this.igPath = fhirIgPath;
+       // this.igPath = fhirIgPath;
     }
 
     public String getHapiServerUrl(){
@@ -27,8 +26,8 @@ public class ApplicationProperties {
     public String getApplicationVersion() {
         return applicationVersion;
     }
-    public String igPath() {
+    /*public String igPath() {
         return igPath;
-    }
+    }*/
 
 }

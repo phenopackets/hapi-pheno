@@ -2,6 +2,7 @@ package org.monarchinitiative.hapiphenoclient.phenopacket;
 
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import org.hl7.fhir.r4.model.Composition;
+import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Reference;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
 
@@ -21,8 +22,15 @@ public class Phenopacket extends Composition {
     }
 
 
+    /**
+     * Note that we set the required identifier (i.e., business identifier) of the Composition from which
+     * 'Phenopacket' is derived. The identifier is supplied by the Id element of the GA4GH Phenopacket, noting
+     * that the GA4GH Phenopacket does not have a REST id (it has an id that plays the same role as a FHIR identifier).
+     * @param individual Object referencing the patient of the Phenopacket.
+     */
     public void setIndividual(Individual individual) {
         this.subject = new Reference(individual);
+        this.setIdentifier(new Identifier().setValue(individual.getId()));
     }
 
     public Reference getIndividual() {

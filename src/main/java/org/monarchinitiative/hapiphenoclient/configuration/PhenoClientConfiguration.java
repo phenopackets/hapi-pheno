@@ -26,10 +26,10 @@ public class PhenoClientConfiguration {
         return applicationProperties.getHapiServerUrl();
     }
 
-    @Bean("igPath")
-    public Path igPath() {
-        return Path.of(applicationProperties.igPath());
-    }
+//    @Bean("igPath")
+//    public Path igPath() {
+//        return Path.of(applicationProperties.igPath());
+//    }
 
 
 
