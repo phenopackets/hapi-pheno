@@ -10,7 +10,7 @@ public class PhenopacketsVariant extends Observation {
     private static final long serialVersionUID = 1L;
     private static final String HGNC_SYSTEM = "http://www.genenames.org/";
     private static final String LOINC_SYSTEM = "http://loinc.org";
-    private static final String LOINC_CYTOGENETIC_CHROMOSOME_LOCATION_ID = "LOINC:48001-2";
+    private static final String LOINC_CYTOGENETIC_CHROMOSOME_LOCATION_ID = "48001-2";
     private static final String LOINC_CYTOGENETIC_CHROMOSOME_LOCATION_DISPLAY = "Cytogenetic (chromosome) location";
     /** LOINC code for Human reference sequence assembly version */
     private static final String LOINC_HUMAN_GENOME_ASSEMBLY_ID = "62374-4";
@@ -48,7 +48,7 @@ public class PhenopacketsVariant extends Observation {
                 .setCode(LOINC_GENETIC_VARIANT_ASSESSMENT_ID)
                 .setDisplay(LOINC_GENETIC_VARIANT_ASSESSMENT_DISPLAY);
         setCode( new CodeableConcept().addCoding(coding));
-        //valueCodeableConcept = LNC#LA9633-4 "Present"
+        //valueCodeableConcept = LNC#LA9633-4 "Present" // TODO does this need fixed?
         CodeableConcept presentCC = new CodeableConcept();
         presentCC.addCoding(new Coding().setCode("LA9633-4").setDisplay("Present").setSystem(LOINC_SYSTEM));
         setValue(presentCC);

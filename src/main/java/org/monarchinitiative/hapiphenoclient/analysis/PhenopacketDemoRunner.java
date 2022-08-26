@@ -23,6 +23,10 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
+import ca.uhn.fhir.rest.api.MethodOutcome;
+import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.*;
+
 import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
 import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
@@ -190,13 +194,32 @@ public class PhenopacketDemoRunner {
 
 
 
+    public IIdType putResource(Resource resourceArg) {
+        LOG.info("Putting resource={}", resourceArg);
+        IParser parser = ctx.newJsonParser();
+        parser.setPrettyPrint(true);
+       // System.out.println(parser.encodeResourceToString(resourceArg));
+        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
 
+        try {
+            MethodOutcome methodOutcome = client
+                    .update()
+                    .resource(resourceArg)
+                    .execute();
+            System.out.println("putResource() returned Id:" + methodOutcome.getId());
+            return methodOutcome.getId();
+        } catch (Exception e) {
+            String msg = String.format("Could not update resource: %s\n", e.getMessage());
+            throw new PhenoClientRuntimeException(msg);
+        }
+    }
 
 
     public IIdType postResource(Resource pfeature) {
         LOG.info("Posting resource={}", pfeature);
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
+
        // System.out.println(parser.encodeResourceToString(pfeature));
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         try {
@@ -204,7 +227,7 @@ public class PhenopacketDemoRunner {
                     .create()
                     .resource(pfeature)
                     .execute();
-            System.out.println(outcome.getId());
+            System.out.println("postResource() returned Id: " + outcome.getId());
             return outcome.getId();
         } catch (ResourceNotFoundException e) {
             //404 means we can contact the server but the server does not have
@@ -272,14 +295,19 @@ public class PhenopacketDemoRunner {
 
 
         System.out.println("\nPUT phenopacket/composition");
-        org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket fhirPhenopacket = bethlem.phenopacket();
+      /*  org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket fhirPhenopacket = bethlem.phenopacket();
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         MethodOutcome methodOutcome = client.update().resource(fhirPhenopacket).execute();
         if (methodOutcome.getId() == null) {
+*/
+// TODO: clean up!
+       Phenopacket fhirPhenopacket = bethlem.phenopacket();
+       IIdType phenopacketId = postResource(fhirPhenopacket);
+       if (phenopacketId == null) {
+
             throw new PhenoClientRuntimeException("Could not retrieve Phenopacket ID from server");
         }
-        IIdType phnenopacketId = methodOutcome.getId();
-        bethlem.setPhenopacketId(phnenopacketId);
+        bethlem.setPhenopacketId(phenopacketId);
         List<PhenotypicFeature> phenotypicFeatureList = bethlem.phenotypicFeatureList();
         Composition.SectionComponent phenotypicFeaturesSection =
                 new Composition.SectionComponent()
@@ -295,7 +323,7 @@ public class PhenopacketDemoRunner {
             IIdType pfeatureId = postResource(pfeature);
             pfeature.setId(pfeatureId.getIdPart());
             phenotypicFeaturesSection.addEntry(new Reference(pfeature));
-            client.update().resource(fhirPhenopacket).execute();
+            putResource(fhirPhenopacket);
         }
 
 
@@ -315,23 +343,25 @@ public class PhenopacketDemoRunner {
             IIdType measurementId = postResource(measurement);
             measurement.setId(measurementId.getIdPart());
             measurementSection.addEntry(new Reference(measurement));
-            client.update().resource(fhirPhenopacket).execute();
+            putResource(fhirPhenopacket);
         }
 
 
-// TODO
+// TODO: cleanup
         System.out.println("\n(TODO) POST variant");
         PhenopacketsVariant variant = bethlem.createPhenopacketsVariant();
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
+        System.out.println("\nShow local version of report on variant");
 
-        System.out.println("\nShow local version of variant");
-        System.out.println(parser.encodeResourceToString(variant));
+        System.out.println("\nPhenopacketsVariant: " + parser.encodeResourceToString(variant));
         //IIdType variantId = postResource(variant);
 
-        System.out.println("\nShow local version of report on variant");
+
+
         PhenopacketsGenomicInterpretation genomicInterpretation = bethlem.addGenomicInterpretation(variant);
         System.out.println(parser.encodeResourceToString(genomicInterpretation));
+
         return bethlem;
     }
 
