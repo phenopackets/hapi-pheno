@@ -50,7 +50,7 @@ public class Phenopacket extends Composition {
                 List<Reference> reflist = c.getEntry();
                 for (Reference ref : reflist) {
                     String id = ref.getReference();
-                    // need to get from server
+                    // need to get from server: TODO
                 }
             }
         }

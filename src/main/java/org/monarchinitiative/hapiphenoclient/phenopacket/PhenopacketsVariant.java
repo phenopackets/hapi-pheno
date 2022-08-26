@@ -5,12 +5,13 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.hl7.fhir.r4.model.*;
 
 @ResourceDef(
-        profile="https://github.com/phenopackets/core-ig/StructureDefinition/PhenopacketsVariant")
+        profile="https://github.com/phenopackets/core-ig/StructureDefinition/phenopackets-variant")
 public class PhenopacketsVariant extends Observation {
     private static final long serialVersionUID = 1L;
     private static final String HGNC_SYSTEM = "http://www.genenames.org/";
-    private static final String LOINC_SYSTEM = "http://loinc.org/";
-    private static final String LOINC_CYTOGENETIC_CHROMOSOME_LOCATION_ID = "LOINC:48001-2";
+    private static final String LOINC_SYSTEM = "http://loinc.org";
+    private static final String LOINC_CYTOGENETIC_CHROMOSOME_LOCATION_ID = "48001-2";
+
     private static final String LOINC_CYTOGENETIC_CHROMOSOME_LOCATION_DISPLAY = "Cytogenetic (chromosome) location";
     /** LOINC code for Human reference sequence assembly version */
     private static final String LOINC_HUMAN_GENOME_ASSEMBLY_ID = "62374-4";
@@ -34,6 +35,14 @@ public class PhenopacketsVariant extends Observation {
     private static final String GENO_ONTOLOGY_SYSTEM = "http://www.ebi.ac.uk/ols/ontologies/geno";
     private static final String LOINC_GENETIC_VARIANT_ASSESSMENT_ID = "69548-6";
     private static final String LOINC_GENETIC_VARIANT_ASSESSMENT_DISPLAY = "Genetic variant assessment";
+    private static final String GA4GH_ACMG_PATHOGENICITY_CLASSIFICATION_URL = "https://github.com/phenopackets/core-ig/StructureDefinition/acmg-pathogenicity-classification";
+    private static final String GA4GH_ACMG_PATHOGENICITY_VALUE_SYSTEM = "http://phenopacket-schema.readthedocs.io/en/v2/variant-interpretation.html#acmgpathogenicityclassification";
+    private static final String GA4GH_THERAPEUTIC_ACTIONABILITY_URL = "https://github.com/phenopackets/core-ig/StructureDefinition/therapeutic-actionability";
+    private static final String GA4GH_THERAPEUTIC_ACTIONABILITY_VALUE_SYSTEM = "http://phenopacket-schema.readthedocs.io/en/v2/variant-interpretation.html#therapeuticactionability";
+    private static final String GA4GH_VRS_OBJECT_URL = "https://github.com/phenopackets/core-ig/StructureDefinition/vrs-object";
+    private static final String GA4GH_MOLECULE_CONTEXT_URL = "https://github.com/phenopackets/core-ig/StructureDefinition/molecule-context";
+    private static final String GA4GH_MOLECULE_CONTEXT_VALUE_SYSTEM = "http://phenopacket-schema.readthedocs.io/en/v2/variant.html#rstmoleculecontext";
+
 
     /**
      * The constructor sets of the code of this profiled Observation to be a LOINC genetic variant assessment
@@ -48,13 +57,140 @@ public class PhenopacketsVariant extends Observation {
                 .setCode(LOINC_GENETIC_VARIANT_ASSESSMENT_ID)
                 .setDisplay(LOINC_GENETIC_VARIANT_ASSESSMENT_DISPLAY);
         setCode( new CodeableConcept().addCoding(coding));
-        //valueCodeableConcept = LNC#LA9633-4 "Present"
+        //valueCodeableConcept = LNC#LA9633-4 "Present" // TODO does this need fixed?
         CodeableConcept presentCC = new CodeableConcept();
         presentCC.addCoding(new Coding().setCode("LA9633-4").setDisplay("Present").setSystem(LOINC_SYSTEM));
         setValue(presentCC);
-
     }
 
+
+    /**
+     * {
+     *       "url" : "https://github.com/phenopackets/core-ig/StructureDefinition/acmg-pathogenicity-classification",
+     *       "valueCodeableConcept" : {
+     *         "coding" : [
+     *           {
+     *             "system" : "http://phenopacket-schema.readthedocs.io/en/v2/variant-interpretation.html#acmgpathogenicityclassification",
+     *             "code" : "5",
+     *             "display" : "PATHOGENIC"
+     *           },
+     *           {
+     *             "system" : "http://loinc.org",
+     *             "code" : "LA6668-3",
+     *             "display" : "PATHOGENIC"
+     *           }
+     *         ]
+     *       }
+     *     },
+     */
+    public void setAcmgPathogenicity(String ga4ghCode, String ga4ghDisplay, String loincCode, String loincDisplay) {
+        Extension ext = new Extension();
+        ext.setUrl(GA4GH_ACMG_PATHOGENICITY_CLASSIFICATION_URL);
+        Coding ga4ghCoding = new Coding().setSystem(GA4GH_ACMG_PATHOGENICITY_VALUE_SYSTEM)
+                        .setCode(ga4ghCode).setDisplay(ga4ghDisplay);
+        Coding loincCoding = new Coding().setSystem(LOINC_SYSTEM)
+                        .setCode(loincCode).setDisplay(loincDisplay);
+        CodeableConcept cc = new CodeableConcept().addCoding(ga4ghCoding).addCoding(loincCoding);
+        ext.setValue(cc);
+        addExtension(ext);
+    }
+
+    /**
+     * Pathogenic 			LA6668-3
+     * Likely pathogenic 			LA26332-9
+     * Uncertain significance 			LA26333-7
+     * Likely benign 			LA26334-5
+     * Benign 			LA6675-8
+     */
+    public void acmgPathogenic() {
+        setAcmgPathogenicity("5", "PATHOGENIC", "LA6668-3", "Pathogenic");
+    }
+
+    public void acmgLikelyPathogenic(){
+        setAcmgPathogenicity("4", "LIKELY_PATHOGENIC", "LA26332-9", "Likely pathogenic" );
+    }
+
+    public void acmgUncertainSignificance() {
+        setAcmgPathogenicity("3","UNCERTAIN_SIGNIFICANCE", "LA26333-7", "Uncertain significance ");
+    }
+    public void acmgLikelyBenign(){
+        setAcmgPathogenicity("2", "LIKELY_BENIGN", "LA26334-5", "Likely benign" );
+    }
+
+    public void acmgBenign() {
+        setAcmgPathogenicity("1", "BENIGN", "LA6675-8", "Benign" );
+    }
+
+    public void acmgUnknown() {
+        Extension ext = new Extension();
+        ext.setUrl(GA4GH_ACMG_PATHOGENICITY_CLASSIFICATION_URL);
+        Coding ga4ghCoding = new Coding().setSystem(GA4GH_ACMG_PATHOGENICITY_VALUE_SYSTEM)
+                .setCode("0").setDisplay("UNKNOWN");
+        CodeableConcept cc = new CodeableConcept().addCoding(ga4ghCoding);
+        ext.setValue(cc);
+        addExtension(ext);
+    }
+
+    public void setTherapeuticActionability(String ga4ghCode, String ga4ghDisplay) {
+        Extension ext = new Extension();
+        ext.setUrl(GA4GH_THERAPEUTIC_ACTIONABILITY_URL);
+        Coding ga4ghCoding = new Coding().setSystem(GA4GH_THERAPEUTIC_ACTIONABILITY_VALUE_SYSTEM)
+                .setCode(ga4ghCode).setDisplay(ga4ghDisplay);
+        CodeableConcept cc = new CodeableConcept().addCoding(ga4ghCoding);
+        ext.setValue(cc);
+        addExtension(ext);
+    }
+
+    public void actionable() {
+        setTherapeuticActionability("2","ACTIONABLE");
+    }
+
+    public void notActionable() {
+        setTherapeuticActionability("1", "NOT_ACTIONABLE");
+    }
+
+    public void unknownActionability() {
+        setTherapeuticActionability("0", "UNKNOWN_ACTIONABILITY");
+    }
+
+    public void vrsObject(String valueAttachmentTitle) {
+        Extension ext = new Extension();
+        ext.setUrl(GA4GH_VRS_OBJECT_URL);
+        Attachment attachment = new Attachment().setTitle(valueAttachmentTitle);
+        ext.setValue(attachment);
+        addExtension(ext);
+    }
+
+    /**
+     * {
+     *       "url" : "https://github.com/phenopackets/core-ig/StructureDefinition/molecule-context",
+     *       "valueCodeableConcept" : {
+     *         "coding" : [
+     *           {
+     *             "system" : "http://phenopacket-schema.readthedocs.io/en/v2/variant.html#rstmoleculecontext",
+     *             "code" : "1",
+     *             "display" : "genomic"
+     *           }
+     *         ]
+     *       }
+     *     }
+     */
+    public void moleculeContext(String ga4ghCode, String ga4ghDisplay) {
+        Extension ext = new Extension();
+        ext.setUrl(GA4GH_MOLECULE_CONTEXT_URL);
+        Coding ga4ghCoding = new Coding().setSystem(GA4GH_MOLECULE_CONTEXT_VALUE_SYSTEM)
+                .setCode(ga4ghCode).setDisplay(ga4ghDisplay);
+        ext.setValue(ga4ghCoding);
+        addExtension(ext);
+    }
+
+    public void genomicMolecularContext() {
+        moleculeContext("1", "genomic");
+    }
+
+    public void unknownMolecularContext() {
+        moleculeContext("0", "unspecified_molecule_context");
+    }
 
 
     /**
@@ -502,11 +638,20 @@ public class PhenopacketsVariant extends Observation {
 
     public void setExactStartEnd(int start, int end) {
         //exact-start-end
+        /*
+         CodeableConcept startEndCC = new CodeableConcept();
+        startEndCC.addCoding(new Coding().setCode("exact-start-end")
+                .setSystem("http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes"));
+         */
         Range valueRange = new Range();
         Quantity low = new Quantity().setValue(start);
         Quantity high = new Quantity().setValue(end);
         valueRange.setLow(low).setHigh(high);
         ObservationComponentComponent occ = new ObservationComponentComponent();
+        CodeableConcept startEndCC = new CodeableConcept();
+        startEndCC.addCoding(new Coding().setCode("exact-start-end")
+                .setSystem("http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes"));
+        occ.setCode(startEndCC);
         occ.setValue(valueRange);
         this.addComponent(occ);
     }

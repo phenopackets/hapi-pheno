@@ -4,6 +4,7 @@ import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
 import org.monarchinitiative.hapiphenoclient.phenopacket.*;
+import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket; // not a org.phenopackets.schema.v2.Phenopacket!!!!
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,7 +38,7 @@ public class BethlemMyopathyExample implements PhenoExample {
      * This method would then return "208"
      * @return the individual id (assigned by FHIR server) as string
      */
-    public String getUnqualifiedIndidualId() {
+    public String getUnqualifiedIndividualId() {
         return individual.getIdElement().toUnqualified().getIdPart();
     }
 
@@ -49,7 +50,7 @@ public class BethlemMyopathyExample implements PhenoExample {
         Individual individual = new Individual();
         HumanName name = new HumanName();
         name.setFamily("Smith");
-        individual.addIdentifier(new Identifier().setValue("id.1").setSystem("http://phenopackets.org"));
+        individual.addIdentifier(new Identifier().setValue("individual.identifier").setSystem("http://phenopackets.org")); //TODO: check me
         individual.setGender(Enumerations.AdministrativeGender.MALE);
         individual.setKaryotypicSex("XY");
         Date birthdate = new GregorianCalendar(2007, Calendar.FEBRUARY, 11).getTime();
@@ -62,9 +63,10 @@ public class BethlemMyopathyExample implements PhenoExample {
     @Override
     public Phenopacket phenopacket() {
         this.phenopacket = new Phenopacket();
+        this.phenopacket.setIdentifier(new Identifier().setValue(phenopacketIdentifier));
         this.phenopacket.setIndividual(individual);
         this.phenopacket.setStatus(Composition.CompositionStatus.FINAL);
-        this.phenopacket.setSubject(new Reference("Patient/" + getUnqualifiedIndidualId()));
+        this.phenopacket.setSubject(new Reference("Patient/" + getUnqualifiedIndividualId()));
         CodeableConcept ga4ghType = new CodeableConcept();
         ga4ghType.addCoding(
                 new Coding().setSystem(GA4GH_SYSTEM)
@@ -73,18 +75,22 @@ public class BethlemMyopathyExample implements PhenoExample {
         this.phenopacket.setDate(new Date()); // current date/time
         this.phenopacket.addAuthor().setReference(williamHarvey.getReference()).setDisplay(williamHarvey.getDisplayName());
         this.phenopacket.setTitle("Phenopacket: Bethlem Myopathy");
-        phenopacket.setId("example.id");
+// TODO: cleanup
+        this.phenopacket.setId("example.id");
+        Identifier identifier = new Identifier();
+        identifier.setSystem("http://acme.com").setValue("example.id");
+        phenopacket.setIdentifier(identifier);
         return phenopacket;
     }
 
 
     public List<PhenotypicFeature> phenotypicFeatureList() {
         List<PhenotypicFeature> features = new ArrayList<>();
-        PhenotypicFeature pf = PhenotypicFeature.createObservation("HP:0001558", "Decreased fetal movement", getUnqualifiedIndidualId());
+        PhenotypicFeature pf = PhenotypicFeature.createObservation("HP:0001558", "Decreased fetal movement", getUnqualifiedIndividualId());
         features.add(pf);
-        PhenotypicFeature pf2 = PhenotypicFeature.createObservation("HP:0011463", "Macroscopic hematuria", getUnqualifiedIndidualId());
+        PhenotypicFeature pf2 = PhenotypicFeature.createObservation("HP:0011463", "Macroscopic hematuria", getUnqualifiedIndividualId());
         features.add(pf2);
-        PhenotypicFeature pf3 = PhenotypicFeature.createObservation("HP:0001270", "Motor delay", getUnqualifiedIndidualId());
+        PhenotypicFeature pf3 = PhenotypicFeature.createObservation("HP:0001270", "Motor delay", getUnqualifiedIndividualId());
         features.add(pf3);
         return features;
     }
@@ -116,7 +122,7 @@ public class BethlemMyopathyExample implements PhenoExample {
         SimpleQuantity high = new SimpleQuantity();
         low.setValue(100).setSystem("http://unitsofmeasure.org").setCode("mg");
         measurement.getReferenceRangeFirstRep().setHigh(high);
-        measurement.setSubject(new Reference( "Patient/"+getUnqualifiedIndidualId()  ));
+        measurement.setSubject(new Reference( "Patient/"+getUnqualifiedIndividualId()  ));
 
         Reference perf = measurement.addPerformer();
         perf.setDisplay(williamHarvey.getDisplayName()).setReference(williamHarvey.getReference());
@@ -145,6 +151,7 @@ public class BethlemMyopathyExample implements PhenoExample {
     @Override
     public PhenopacketsVariant createPhenopacketsVariant() {
         PhenopacketsVariant phenopacketsVariant = new PhenopacketsVariant();
+        phenopacketsVariant.setId("COL6A1.variant.1");
         phenopacketsVariant.setGeneStudied(2211, "COL6A1");
         phenopacketsVariant.setHeterozygous();
         phenopacketsVariant.setHg38ReferenceAssembly();
@@ -155,7 +162,32 @@ public class BethlemMyopathyExample implements PhenoExample {
         phenopacketsVariant.oneBasedCoordinateSystem();
         phenopacketsVariant.setVariationCode("NM_001848.3:c.877G>A", "NP_001839.2:p.(Gly293Arg)");
         phenopacketsVariant.setStatus(Observation.ObservationStatus.FINAL);
+
+        phenopacketsVariant.setPatientId(getUnqualifiedIndividualId());
+
         phenopacketsVariant.setPatientId(getUnqualifiedIndidualId());
+        phenopacketsVariant.acmgPathogenic();
+        phenopacketsVariant.actionable();
+        phenopacketsVariant.vrsObject("VrsObject Example");
+        phenopacketsVariant.genomicMolecularContext();
+        /*
+         "code" : {
+        "coding" : [
+          {
+            "system" : "http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes",
+            "code" : "exact-start-end"
+          }
+        ]
+      },
+       CodeableConcept ga4ghType = new CodeableConcept();
+        ga4ghType.addCoding(
+                new Coding().setSystem(GA4GH_SYSTEM)
+                        .setCode(GA4GH_TYPE));
+         */
+        CodeableConcept startEndCC = new CodeableConcept();
+        startEndCC.addCoding(new Coding().setCode("exact-start-end")
+                .setSystem("http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes"));
+        //phenopacketsVariant
         return phenopacketsVariant;
     }
 
@@ -187,7 +219,7 @@ public class BethlemMyopathyExample implements PhenoExample {
     @Override
     public PhenopacketsGenomicInterpretation addGenomicInterpretation(PhenopacketsVariant variant) {
         PhenopacketsGenomicInterpretation genomicInterpretation = new PhenopacketsGenomicInterpretation();
-        genomicInterpretation.setPatientId(getUnqualifiedIndidualId());
+        genomicInterpretation.setPatientId(getUnqualifiedIndividualId());
         genomicInterpretation.causativeStatus();
         genomicInterpretation.addResult(variant);
         return genomicInterpretation;

@@ -2,14 +2,15 @@ package org.monarchinitiative.hapiphenoclient;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-import org.hl7.fhir.r4.model.Bundle;
 import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner;
+
+import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner.FhirParts;
+
+import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
+
 import org.monarchinitiative.hapiphenoclient.ga4gh.Ga4GhPhenopacket;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
-import org.phenopackets.schema.v2.Phenopacket;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,18 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         LOG.info("EXECUTING : command line runner");
-        PhenoExample bethlem = demoRunner.postBethlemClinicalExample();
+
+
+        demoRunner.postToFhir();
+        FhirParts fhirParts = demoRunner.retrieveFhirParts();
+        org.phenopackets.schema.v2.Phenopacket ga4ghPhenopacket = demoRunner.assemblePhenopacket(fhirParts);
+
+        System.out.println("\nApp:Show phenopacket contents");
+        // TODO: cleanup
+/*
+        PhenoExample bethlem = new BethlemMyopathyExample();
+        demoRunner.setPhenoExample(bethlem);
+        demoRunner.postClinicalExample();
         System.out.println("Retrieving phenopacket " + bethlem.getPhenopacketId().getIdPart());
         Bundle patientBundle = demoRunner.searchForPhenopacketById(bethlem.getPhenopacketId());
         System.out.println(patientBundle);
@@ -49,6 +61,7 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
         List<PhenotypicFeature> features = demoRunner.retrievePhenotypicFeaturesFromBundle(patientBundle);
         List<Measurement> measurements = demoRunner.retrieveMeasurementsFromBundle(patientBundle);
         Phenopacket ga4ghPhenopacket = Ga4GhPhenopacket.fromFhir(individual, features, measurements);
+*/
         try {
             String json = JsonFormat.printer().print(ga4ghPhenopacket);
             System.out.println(json);
