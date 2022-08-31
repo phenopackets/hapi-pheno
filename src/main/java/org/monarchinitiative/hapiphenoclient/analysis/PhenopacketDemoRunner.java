@@ -361,17 +361,13 @@ public class PhenopacketDemoRunner {
         }
 
 
-// TODO: cleanup
-        System.out.println("\n(TODO) POST variant");
+
+        // Variant
         PhenopacketsVariant variant = bethlem.createPhenopacketsVariant();
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
-        System.out.println("\nShow local version of report on variant");
-
-
-
         System.out.println("\nPhenopacketsVariant: " + parser.encodeResourceToString(variant));
-        //IIdType variantId = postResource(variant);
+        IIdType variantId = postResource(variant);
 
         PhenopacketsGenomicInterpretation genomicInterpretation = bethlem.addGenomicInterpretation(variant);
         System.out.println(parser.encodeResourceToString(genomicInterpretation));
