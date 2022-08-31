@@ -48,20 +48,7 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
         org.phenopackets.schema.v2.Phenopacket ga4ghPhenopacket = demoRunner.assemblePhenopacket(fhirParts);
 
         System.out.println("\nApp:Show phenopacket contents");
-        // TODO: cleanup
-/*
-        PhenoExample bethlem = new BethlemMyopathyExample();
-        demoRunner.setPhenoExample(bethlem);
-        demoRunner.postClinicalExample();
-        System.out.println("Retrieving phenopacket " + bethlem.getPhenopacketId().getIdPart());
-        Bundle patientBundle = demoRunner.searchForPhenopacketById(bethlem.getPhenopacketId());
-        System.out.println(patientBundle);
-        System.out.println("*************************");
-        Individual individual = demoRunner.extractIndividual(bethlem.getUnqualifiedIndidualId());
-        List<PhenotypicFeature> features = demoRunner.retrievePhenotypicFeaturesFromBundle(patientBundle);
-        List<Measurement> measurements = demoRunner.retrieveMeasurementsFromBundle(patientBundle);
-        Phenopacket ga4ghPhenopacket = Ga4GhPhenopacket.fromFhir(individual, features, measurements);
-*/
+
         try {
             String json = JsonFormat.printer().print(ga4ghPhenopacket);
             System.out.println(json);

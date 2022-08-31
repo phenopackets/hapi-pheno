@@ -25,7 +25,6 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.hl7.fhir.instance.model.api.IIdType;
-import org.hl7.fhir.r4.model.*;
 
 import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 
@@ -298,57 +297,31 @@ public class PhenopacketDemoRunner {
     }
 
 
-/*
     public PhenoExample postBethlemClinicalExample() {
 
+        // Practioners
         System.out.println("\nPUT practitioners");
         postPractitioners();
 
+
+        // Patient
         System.out.println("\nPOST patient");
         BethlemMyopathyExample bethlem = new BethlemMyopathyExample();
         IIdType individualId = postResource(bethlem.individual());
         bethlem.setIndividualId(individualId);
-*/
-    public void postClinicalExample() {
-        if (phenoExample == null) {
-            throw new PhenoClientRuntimeException("Cannot post example before it is initialized");
-        }
-        prelims();
-
-        IIdType individualId = postResource(phenoExample.individual());
-        phenoExample.setIndividualId(individualId);
 
 
+        // Phenopacket
         System.out.println("\nPUT phenopacket/composition");
-      /*  org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket fhirPhenopacket = bethlem.phenopacket();
-
-
-        Phenopacket fhirPhenopacket = phenoExample.phenopacket();
-        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        MethodOutcome methodOutcome = client.create().resource(fhirPhenopacket).execute();
-        if (methodOutcome.getId() == null) {
-*/
-// TODO: clean up!
-       Phenopacket fhirPhenopacket = bethlem.phenopacket();
-       IIdType phenopacketId = postResource(fhirPhenopacket);
-       if (phenopacketId == null) {
-
+        org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket fhirPhenopacket = bethlem.phenopacket();
+        IIdType phenopacketId = postResource(fhirPhenopacket);
+        if (phenopacketId == null) {
             throw new PhenoClientRuntimeException("Could not retrieve Phenopacket ID from server");
         }
-/*
         bethlem.setPhenopacketId(phenopacketId);
-        List<PhenotypicFeature> phenotypicFeatureList = bethlem.phenotypicFeatureList();
-*/
-        IIdType phnenopacketId = methodOutcome.getId();
-        phenoExample.setPhenopacketId(phnenopacketId);
-        PhenopacketsVariant variant = phenoExample.createPhenopacketsVariant();
 
-        IParser parser = ctx.newJsonParser();
-        parser.setPrettyPrint(true);
-        System.out.println(parser.encodeResourceToString(variant));
-        IIdType variantId = postResource(variant);
-        List<PhenotypicFeature> phenotypicFeatureList = phenoExample.phenotypicFeatureList();
-// TODO: cleanup
+        // Features
+        List<PhenotypicFeature> phenotypicFeatureList = bethlem.phenotypicFeatureList();
         Composition.SectionComponent phenotypicFeaturesSection =
                 new Composition.SectionComponent()
                         .setTitle("phenotypic_features")
@@ -367,6 +340,8 @@ public class PhenopacketDemoRunner {
         }
 
 
+        // Measurements
+        List<Measurement> measurementList = bethlem.measurementList();
         Composition.SectionComponent measurementSection =
                 new Composition.SectionComponent()
                         .setTitle("measurements")
@@ -376,11 +351,7 @@ public class PhenopacketDemoRunner {
                                         .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
 
         fhirPhenopacket.addSection(measurementSection);
-        List<Measurement> measurementList = bethlem.measurementList();
         int j=1;
-
-//        List<Measurement> measurementList = phenoExample.measurementList();
-
         for (Measurement measurement : measurementList) {
             System.out.println("\nPOST measurement PUT phenopacket " + j++);
             IIdType measurementId = postResource(measurement);
@@ -397,21 +368,18 @@ public class PhenopacketDemoRunner {
         parser.setPrettyPrint(true);
         System.out.println("\nShow local version of report on variant");
 
+
+
         System.out.println("\nPhenopacketsVariant: " + parser.encodeResourceToString(variant));
         //IIdType variantId = postResource(variant);
-
-
 
         PhenopacketsGenomicInterpretation genomicInterpretation = bethlem.addGenomicInterpretation(variant);
         System.out.println(parser.encodeResourceToString(genomicInterpretation));
 
         return bethlem;
-/*
-
-        PhenopacketsGenomicInterpretation genomicInterpretation = phenoExample.addGenomicInterpretation(variant);
-        System.out.println(parser.encodeResourceToString(genomicInterpretation));
-/*
     }
+
+
 
 // TODO: fetch patients from FHIR and show? ...using extractIndividual function below?
     /*

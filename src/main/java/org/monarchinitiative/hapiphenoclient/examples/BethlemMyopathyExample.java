@@ -63,7 +63,7 @@ public class BethlemMyopathyExample implements PhenoExample {
     @Override
     public Phenopacket phenopacket() {
         this.phenopacket = new Phenopacket();
-        this.phenopacket.setIdentifier(new Identifier().setValue(phenopacketIdentifier));
+        this.phenopacket.setIdentifier(new Identifier().setValue(phenopacketIdentifier)); // phenopacket.1
         this.phenopacket.setIndividual(individual);
         this.phenopacket.setStatus(Composition.CompositionStatus.FINAL);
         this.phenopacket.setSubject(new Reference("Patient/" + getUnqualifiedIndividualId()));
@@ -75,11 +75,13 @@ public class BethlemMyopathyExample implements PhenoExample {
         this.phenopacket.setDate(new Date()); // current date/time
         this.phenopacket.addAuthor().setReference(williamHarvey.getReference()).setDisplay(williamHarvey.getDisplayName());
         this.phenopacket.setTitle("Phenopacket: Bethlem Myopathy");
+
 // TODO: cleanup
         this.phenopacket.setId("example.id");
+
         Identifier identifier = new Identifier();
         identifier.setSystem("http://acme.com").setValue("example.id");
-        phenopacket.setIdentifier(identifier);
+        phenopacket.setIdentifier(identifier); // example.id
         return phenopacket;
     }
 
@@ -165,12 +167,11 @@ public class BethlemMyopathyExample implements PhenoExample {
 
         phenopacketsVariant.setPatientId(getUnqualifiedIndividualId());
 
-        phenopacketsVariant.setPatientId(getUnqualifiedIndidualId());
         phenopacketsVariant.acmgPathogenic();
         phenopacketsVariant.actionable();
         phenopacketsVariant.vrsObject("VrsObject Example");
         phenopacketsVariant.genomicMolecularContext();
-        /*
+  /* ****
          "code" : {
         "coding" : [
           {
@@ -183,7 +184,7 @@ public class BethlemMyopathyExample implements PhenoExample {
         ga4ghType.addCoding(
                 new Coding().setSystem(GA4GH_SYSTEM)
                         .setCode(GA4GH_TYPE));
-         */
+  *** */
         CodeableConcept startEndCC = new CodeableConcept();
         startEndCC.addCoding(new Coding().setCode("exact-start-end")
                 .setSystem("http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes"));
