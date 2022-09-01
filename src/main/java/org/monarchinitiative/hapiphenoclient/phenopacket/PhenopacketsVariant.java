@@ -5,7 +5,8 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.hl7.fhir.r4.model.*;
 
 @ResourceDef(
-        profile="https://github.com/phenopackets/core-ig/StructureDefinition/phenopackets-variant")
+        //profile="https://github.com/phenopackets/core-ig/StructureDefinition/phenopackets-variant")
+        profile="https://github.com/phenopackets/core-ig/StructureDefinition/PhenopacketsVariant")
 public class PhenopacketsVariant extends Observation {
     private static final long serialVersionUID = 1L;
     private static final String HGNC_SYSTEM = "http://www.genenames.org/";
