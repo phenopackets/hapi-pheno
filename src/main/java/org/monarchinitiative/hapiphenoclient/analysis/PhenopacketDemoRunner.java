@@ -371,7 +371,7 @@ public class PhenopacketDemoRunner {
 
 
         System.out.println("\nPhenopacketsVariant: " + parser.encodeResourceToString(variant));
-        //IIdType variantId = postResource(variant);
+        IIdType variantId = postResource(variant);
 
         PhenopacketsGenomicInterpretation genomicInterpretation = bethlem.addGenomicInterpretation(variant);
         System.out.println(parser.encodeResourceToString(genomicInterpretation));
