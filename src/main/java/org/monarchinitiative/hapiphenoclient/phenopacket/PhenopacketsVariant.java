@@ -85,7 +85,9 @@ public class PhenopacketsVariant extends Observation {
      *     },
      */
     public void setAcmgPathogenicity(String ga4ghCode, String ga4ghDisplay, String loincCode, String loincDisplay) {
-        Extension ext = new Extension();
+       /*
+        ORIGINAL
+       Extension ext = new Extension();
         ext.setUrl(GA4GH_ACMG_PATHOGENICITY_CLASSIFICATION_URL);
         Coding ga4ghCoding = new Coding().setSystem(GA4GH_ACMG_PATHOGENICITY_VALUE_SYSTEM)
                         .setCode(ga4ghCode).setDisplay(ga4ghDisplay);
@@ -93,7 +95,36 @@ public class PhenopacketsVariant extends Observation {
                         .setCode(loincCode).setDisplay(loincDisplay);
         CodeableConcept cc = new CodeableConcept().addCoding(ga4ghCoding).addCoding(loincCoding);
         ext.setValue(cc);
-        addExtension(ext);
+        addExtension(ext);*/
+        Coding acmgPathogencityCoding = new Coding();
+        //
+        acmgPathogencityCoding.setSystem("Genetic variation clinical significance")
+                .setCode("53037-8")
+                .setDisplay("Genetic variation clinical significance");
+        Coding loincPathogenicityCategoryCoding = new Coding().setSystem(LOINC_SYSTEM)
+                .setCode(loincCode).setDisplay(loincDisplay);
+        CodeableConcept loincPathogenicityCC = new CodeableConcept().addCoding(acmgPathogencityCoding);
+        ObservationComponentComponent occ = new ObservationComponentComponent();
+        occ.setCode(loincPathogenicityCC);
+
+        CodeableConcept cc = new CodeableConcept();
+        cc.addCoding(loincPathogenicityCategoryCoding);
+        occ.setValue(cc);
+        this.addComponent(occ);
+        /*
+
+
+        ObservationComponentComponent occ = new ObservationComponentComponent();
+        occ.setCode(loincAllelicStateCC);
+        Coding sequenceOntologyCoding = new Coding();
+        sequenceOntologyCoding.setSystem(GENO_ONTOLOGY_SYSTEM)
+                .setCode(codeValue)
+                .setDisplay(display);
+        CodeableConcept cc = new CodeableConcept();
+        cc.addCoding(sequenceOntologyCoding);
+        occ.setValue(cc);
+        this.addComponent(occ);
+         */
     }
 
     /**
