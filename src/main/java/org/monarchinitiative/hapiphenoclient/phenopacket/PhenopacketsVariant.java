@@ -189,6 +189,8 @@ public class PhenopacketsVariant extends Observation {
         Extension ext = new Extension();
         ext.setUrl(GA4GH_VRS_OBJECT_URL);
         Attachment attachment = new Attachment().setTitle(valueAttachmentTitle);
+        //TODO cleanup.
+        attachment.setUrl("http://example.com/somefile.txt");
         ext.setValue(attachment);
         addExtension(ext);
     }
@@ -212,7 +214,8 @@ public class PhenopacketsVariant extends Observation {
         ext.setUrl(GA4GH_MOLECULE_CONTEXT_URL);
         Coding ga4ghCoding = new Coding().setSystem(GA4GH_MOLECULE_CONTEXT_VALUE_SYSTEM)
                 .setCode(ga4ghCode).setDisplay(ga4ghDisplay);
-        ext.setValue(ga4ghCoding);
+        CodeableConcept ga4ghCodingCC = new CodeableConcept().addCoding(ga4ghCoding);
+        ext.setValue(ga4ghCodingCC);
         addExtension(ext);
     }
 
@@ -605,7 +608,9 @@ public class PhenopacketsVariant extends Observation {
         Coding functionalAnnotationCoding = new Coding();
         functionalAnnotationCoding.setSystem(FHIR_GENOMICS_REPORTING_SYSTEM).setCode("functional-annotation");
 
-        CodeableConcept loincGenomicCoordinateSystemCC = new CodeableConcept().addCoding(functionalAnnotationCoding);
+        // TODO: review the commenting out of adding the coding.
+        CodeableConcept loincGenomicCoordinateSystemCC = new CodeableConcept(); //.addCoding
+        // (functionalAnnotationCoding);
         ObservationComponentComponent occ = new ObservationComponentComponent();
         occ.setCode(loincGenomicCoordinateSystemCC);
         Coding sequenceOntologyCoding = new Coding();
