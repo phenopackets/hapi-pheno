@@ -34,6 +34,7 @@
         <hapi.version>5.6.2</hapi.version>
         <protobuf.version>3.16.1</protobuf.version>
         <phenopacket.schema.version>2.0.2</phenopacket.schema.version>
+        <springboot.starter.version>2.7.2</springboot.starter.version>
     </properties>
 
     <licenses>
@@ -101,7 +102,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter</artifactId>
-                <version>2.6.3</version>
+                <version>${springboot.starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.protobuf</groupId>
@@ -123,7 +124,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
-                <version>2.6.3</version>
+                <version>${springboot.starter.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
