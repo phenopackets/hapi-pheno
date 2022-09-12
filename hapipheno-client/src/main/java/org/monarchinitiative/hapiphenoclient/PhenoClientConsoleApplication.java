@@ -6,19 +6,12 @@ import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner;
 
 import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner.FhirParts;
 
-import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
-import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
-
-import org.monarchinitiative.hapiphenoclient.ga4gh.Ga4GhPhenopacket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.List;
 
 
 @SpringBootApplication

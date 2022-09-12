@@ -7,7 +7,7 @@ import org.phenopackets.schema.v2.core.PhenotypicFeature;
 public class PhenotypicFeatureTransformer {
 
 
-    public static PhenotypicFeature toGa4gh(org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature fhirPhenotypicFeature) {
+    public static PhenotypicFeature toGa4gh(org.monarchinitiative.hapiphenocore.phenopacket.PhenotypicFeature fhirPhenotypicFeature) {
         PhenotypicFeature.Builder builder = PhenotypicFeature.newBuilder();
         CodeableConcept codeableConcept = fhirPhenotypicFeature.getCode();
         String hpoConceptId = codeableConcept.getCodingFirstRep().getCode();

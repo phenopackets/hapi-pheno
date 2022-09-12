@@ -1,4 +1,4 @@
-package org.monarchinitiative.hapiphenoclient.except;
+package org.monarchinitiative.hapiphenocore.except;
 
 public class PhenoClientRuntimeException extends RuntimeException {
 

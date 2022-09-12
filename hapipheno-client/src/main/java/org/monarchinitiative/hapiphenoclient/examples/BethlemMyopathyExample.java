@@ -3,8 +3,13 @@ package org.monarchinitiative.hapiphenoclient.examples;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
-import org.monarchinitiative.hapiphenoclient.phenopacket.*;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket; // not a org.phenopackets.schema.v2.Phenopacket!!!!
+
+import org.monarchinitiative.hapiphenocore.phenopacket.PhenopacketsGenomicInterpretation;
+import org.monarchinitiative.hapiphenocore.phenopacket.Individual;
+import org.monarchinitiative.hapiphenocore.phenopacket.Measurement;
+import org.monarchinitiative.hapiphenocore.phenopacket.Phenopacket;
+import org.monarchinitiative.hapiphenocore.phenopacket.PhenopacketsVariant;
+import org.monarchinitiative.hapiphenocore.phenopacket.PhenotypicFeature;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

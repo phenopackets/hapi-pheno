@@ -8,7 +8,7 @@ import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
 import org.hl7.fhir.r4.model.Observation;
 import org.junit.jupiter.api.Test;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
+import org.monarchinitiative.hapiphenocore.phenopacket.PhenotypicFeature;
 
 
 public class PhenotypeFeatureValidatorTest {

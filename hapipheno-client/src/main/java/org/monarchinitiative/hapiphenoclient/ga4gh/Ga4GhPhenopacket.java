@@ -1,8 +1,8 @@
 package org.monarchinitiative.hapiphenoclient.ga4gh;
 
-import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
+import org.monarchinitiative.hapiphenocore.phenopacket.Individual;
+import org.monarchinitiative.hapiphenocore.phenopacket.Measurement;
+import org.monarchinitiative.hapiphenocore.phenopacket.PhenotypicFeature;
 import org.phenopackets.schema.v2.Phenopacket;
 
 import java.util.ArrayList;

@@ -27,15 +27,13 @@
     <artifactId>hapi-pheno</artifactId>
     <version>0.4.1</version>
 
-    <prerequisites>
-        <maven>3.6.3</maven>
-    </prerequisites>
+
     <properties>
         <java.version>11</java.version>
         <spring_boot_version>2.3.4.RELEASE</spring_boot_version>
         <hapi.version>5.6.2</hapi.version>
         <protobuf.version>3.16.1</protobuf.version>
-
+        <phenopacket.schema.version>2.0.2</phenopacket.schema.version>
     </properties>
 
     <licenses>
@@ -95,14 +93,11 @@
                 <artifactId>hapi-fhir-server</artifactId>
                 <version>${hapi.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.phenopackets</groupId>
                 <artifactId>phenopacket-schema</artifactId>
-                <version>2.0.2</version>
+                <version>${phenopacket.schema.version}</version>
             </dependency>
-
-
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter</artifactId>
@@ -117,38 +112,25 @@
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java-util</artifactId>
                 <version>${protobuf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
-
             <!-- HAPI-FHIR uses Logback for logging support. The logback library is included automatically by Maven as a part of the hapi-fhir-base dependency, but you also need to include a logging library. Logback
                 is used here, but log4j would also be fine. -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
+                <version>1.4.0</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>2.6.3</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <scope>test</scope>
+                <version>5.9.0</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
     <build>
@@ -158,28 +140,15 @@
                 <filtering>false</filtering>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.monarchinitiative.hapiphenoclient.PhenoClientConsoleApplication</mainClass>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <executions>
-                    <!-- Invokes both the integration-test and the verify goals of the Failsafe Maven
-                        plugin -->
+       <plugins>
+
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-failsafe-plugin</artifactId>
+                  <version>3.0.0-M5</version>
+                  <executions>
+                      <!-- Invokes both the integration-test and the verify goals of the Failsafe Maven
+                          plugin -->
                     <execution>
                         <id>integration-tests</id>
                         <goals>

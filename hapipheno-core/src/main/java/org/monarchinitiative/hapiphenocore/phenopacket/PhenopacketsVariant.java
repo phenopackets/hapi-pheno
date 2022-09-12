@@ -1,5 +1,4 @@
-package org.monarchinitiative.hapiphenoclient.phenopacket;
-
+package org.monarchinitiative.hapiphenocore.phenopacket;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import org.apache.commons.lang3.NotImplementedException;
 import org.hl7.fhir.r4.model.*;

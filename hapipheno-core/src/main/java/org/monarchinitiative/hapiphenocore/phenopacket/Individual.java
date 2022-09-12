@@ -1,4 +1,4 @@
-package org.monarchinitiative.hapiphenoclient.phenopacket;
+package org.monarchinitiative.hapiphenocore.phenopacket;
 
 import ca.uhn.fhir.model.api.annotation.*;
 import ca.uhn.fhir.model.api.annotation.Extension;

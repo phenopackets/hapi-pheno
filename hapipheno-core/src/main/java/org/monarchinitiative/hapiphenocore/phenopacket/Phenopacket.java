@@ -1,10 +1,10 @@
-package org.monarchinitiative.hapiphenoclient.phenopacket;
+package org.monarchinitiative.hapiphenocore.phenopacket;
 
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import org.hl7.fhir.r4.model.Composition;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Reference;
-import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
+import org.monarchinitiative.hapiphenocore.except.PhenoClientRuntimeException;
 
 import java.util.List;
 import java.util.Optional;

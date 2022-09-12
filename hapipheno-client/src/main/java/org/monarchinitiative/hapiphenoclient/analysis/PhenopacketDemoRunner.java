@@ -14,11 +14,9 @@ import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
-import org.hl7.fhir.instance.model.api.IIdType;
 
 import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
-import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
@@ -28,8 +26,7 @@ import org.hl7.fhir.instance.model.api.IIdType;
 
 import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 
-import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
-import org.monarchinitiative.hapiphenoclient.except.PhenoClientRuntimeException;
+import org.monarchinitiative.hapiphenocore.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
 import org.monarchinitiative.hapiphenoclient.ga4gh.Ga4GhPhenopacket;
 
@@ -37,17 +34,13 @@ import org.monarchinitiative.hapiphenoclient.ga4gh.Ga4GhPhenopacket;
 //import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
 //import org.phenopackets.schema.v2.Phenopacket;
 
+import org.monarchinitiative.hapiphenocore.phenopacket.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import org.monarchinitiative.hapiphenoclient.examples.PhenoExample;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Individual;
-import org.monarchinitiative.hapiphenoclient.phenopacket.Measurement;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenotypicFeature;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenopacketsVariant;
-import org.monarchinitiative.hapiphenoclient.phenopacket.PhenopacketsGenomicInterpretation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,7 +122,7 @@ public class PhenopacketDemoRunner {
     public Bundle searchForPhenopacketById(IIdType id) {
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         Bundle response = client.search()
-                .forResource(org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket.class)
+                .forResource(org.monarchinitiative.hapiphenocore.phenopacket.Phenopacket.class)
                 .where(Resource.RES_ID.exactly().code(id.getIdPart()))
                 .returnBundle(Bundle.class)
                 .execute();
@@ -313,7 +306,7 @@ public class PhenopacketDemoRunner {
 
         // Phenopacket
         System.out.println("\nPUT phenopacket/composition");
-        org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket fhirPhenopacket = bethlem.phenopacket();
+        Phenopacket fhirPhenopacket = bethlem.phenopacket();
         IIdType phenopacketId = postResource(fhirPhenopacket);
         if (phenopacketId == null) {
             throw new PhenoClientRuntimeException("Could not retrieve Phenopacket ID from server");
@@ -398,16 +391,16 @@ public class PhenopacketDemoRunner {
         return indi;
     }
 
-    public class FhirParts {
-        // does java14 have some kind of struct/record for this?
-        Bundle bundle; 
-        Individual individual;
-        List<PhenotypicFeature> features; 
-        List<Measurement> measurements; 
+    public static class FhirParts {
+        // does java14 have some kind of struct/record for this? -- we are still at Java 11, rcords were Java 16
+        private final Bundle bundle;
+        private final Individual individual;
+        private final List<PhenotypicFeature> features;
+        private final List<Measurement> measurements;
 
         public FhirParts(Bundle bundle,
                          Individual individual,
-                         List<PhenotypicFeature> features, 
+                         List<PhenotypicFeature> features,
                          List<Measurement> measurements) {
             this.bundle = bundle;
             this.individual = individual;

@@ -1,7 +1,7 @@
 package org.monarchinitiative.hapiphenoclient.examples;
 
 import org.hl7.fhir.instance.model.api.IIdType;
-import org.monarchinitiative.hapiphenoclient.phenopacket.*;
+import org.monarchinitiative.hapiphenocore.phenopacket.*;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@ import org.phenopackets.schema.v2.core.*;
 
 public class MeasurementTransformer {
 
-    public static Measurement toGa4gh(org.monarchinitiative.hapiphenoclient.phenopacket.Measurement fhirMeasurement) {
+    public static Measurement toGa4gh(org.monarchinitiative.hapiphenocore.phenopacket.Measurement fhirMeasurement) {
         Measurement.Builder builder = Measurement.newBuilder();
         CodeableConcept codeableConcept = fhirMeasurement.getCode();
         String hpoConceptId = codeableConcept.getCodingFirstRep().getCode();

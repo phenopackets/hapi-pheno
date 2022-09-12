@@ -21,7 +21,7 @@ public class IndividualTransformer {
         return individual;
  */
 
-    public static Individual toGa4gh(org.monarchinitiative.hapiphenoclient.phenopacket.Individual patient) {
+    public static Individual toGa4gh(org.monarchinitiative.hapiphenocore.phenopacket.Individual patient) {
         Individual.Builder builder = Individual.newBuilder();
         if (patient.getId() != null) {
             builder.setId(patient.getId());
@@ -43,7 +43,7 @@ public class IndividualTransformer {
         LocalDate stop = convertToLocalDate(now);
         long years = java.time.temporal.ChronoUnit.YEARS.between( start , stop );
         String isoAge = String.format("P%dY", years);
-        org.monarchinitiative.hapiphenoclient.phenopacket.Individual.KaryotypicSex ksex = patient.getKaryotypicSex();
+        org.monarchinitiative.hapiphenocore.phenopacket.Individual.KaryotypicSex ksex = patient.getKaryotypicSex();
         builder.setTimeAtLastEncounter(TimeElement.newBuilder()
                 .setAge(Age.newBuilder().setIso8601Duration(isoAge)).build());
         if (!ksex.isEmpty()) {
