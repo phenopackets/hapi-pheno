@@ -28,7 +28,7 @@ import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 
 import org.monarchinitiative.hapiphenocore.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
-import org.monarchinitiative.hapiphenoclient.ga4gh.Ga4GhPhenopacket;
+import org.monarchinitiative.hapiphenocore.fhir_to_ga4gh.Ga4GhPhenopacket;
 
 // Both used here, but package is explicitly mentioned to distinguish them
 //import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;

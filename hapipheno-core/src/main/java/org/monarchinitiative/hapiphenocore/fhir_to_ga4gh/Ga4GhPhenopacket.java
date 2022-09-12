@@ -1,4 +1,4 @@
-package org.monarchinitiative.hapiphenoclient.ga4gh;
+package org.monarchinitiative.hapiphenocore.fhir_to_ga4gh;
 
 import org.monarchinitiative.hapiphenocore.phenopacket.Individual;
 import org.monarchinitiative.hapiphenocore.phenopacket.Measurement;

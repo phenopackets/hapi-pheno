@@ -1,4 +1,4 @@
-package org.monarchinitiative.hapiphenoclient.ga4gh;
+package org.monarchinitiative.hapiphenocore.fhir_to_ga4gh;
 
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Type;
