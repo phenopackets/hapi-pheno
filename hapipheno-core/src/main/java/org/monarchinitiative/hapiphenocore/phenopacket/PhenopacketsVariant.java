@@ -110,20 +110,6 @@ public class PhenopacketsVariant extends Observation {
         cc.addCoding(loincPathogenicityCategoryCoding);
         occ.setValue(cc);
         this.addComponent(occ);
-        /*
-
-
-        ObservationComponentComponent occ = new ObservationComponentComponent();
-        occ.setCode(loincAllelicStateCC);
-        Coding sequenceOntologyCoding = new Coding();
-        sequenceOntologyCoding.setSystem(GENO_ONTOLOGY_SYSTEM)
-                .setCode(codeValue)
-                .setDisplay(display);
-        CodeableConcept cc = new CodeableConcept();
-        cc.addCoding(sequenceOntologyCoding);
-        occ.setValue(cc);
-        this.addComponent(occ);
-         */
     }
 
     /**
@@ -674,11 +660,6 @@ public class PhenopacketsVariant extends Observation {
 
     public void setExactStartEnd(int start, int end) {
         //exact-start-end
-        /*
-         CodeableConcept startEndCC = new CodeableConcept();
-        startEndCC.addCoding(new Coding().setCode("exact-start-end")
-                .setSystem("http://hl7.org/fhir/uv/genomics-reporting/CodeSystem/tbd-codes"));
-         */
         Range valueRange = new Range();
         Quantity low = new Quantity().setValue(start);
         Quantity high = new Quantity().setValue(end);

@@ -70,12 +70,4 @@ public class Phenopacket extends Composition {
         }
     }
 
-
-//    List<PhenotypicFeature> phenotypicFeatureList;
-//
-//    @Override
-//    public Composition setPhenotypicFeatureSection(List<SectionComponent> theSection) {
-//        //phenotypicFeatureList = theSection;
-//        return super.setSection(theSection);
-//    }
 }
