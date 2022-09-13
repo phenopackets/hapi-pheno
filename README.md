@@ -1,7 +1,8 @@
 # hapi-pheno-client
 FHIR Client for working with phenopackets.
 
-## Running this package: mvn spring-boot:run
+## Running this package: mvn spring-boot:run -pl hapipheno-client
+
 The demo app is intended to be run together with a HAPI FHIR server that
 has ingested the GA4GH [Phenopacket IG](http://phenopackets.org/core-ig/index.html).
 This [repository](https://github.com/pnrobinson/hapi-pheno-server) contains a copy of the 
