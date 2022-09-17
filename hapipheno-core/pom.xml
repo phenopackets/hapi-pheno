@@ -33,6 +33,7 @@
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-server</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -42,6 +43,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
