@@ -1,122 +1,53 @@
 package org.monarchinitiative.hapiphenoclient.analysis;
 
+
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.primitive.IdDt;
-
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Composition;
-import org.hl7.fhir.r4.model.DateType;
-import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.Parameters;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Practitioner;
-import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.Resource;
-
 import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-
-import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.hl7.fhir.instance.model.api.IIdType;
-
+import org.hl7.fhir.r4.model.*;
 import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
-
-import org.monarchinitiative.hapiphenocore.except.PhenoClientRuntimeException;
+import org.monarchinitiative.hapiphenoclient.examples.PhenopacketPoster;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
+import org.monarchinitiative.hapiphenocore.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenocore.fhir_to_ga4gh.Ga4GhPhenopacket;
-
-// Both used here, but package is explicitly mentioned to distinguish them
-//import org.monarchinitiative.hapiphenoclient.phenopacket.Phenopacket;
-//import org.phenopackets.schema.v2.Phenopacket;
-
 import org.monarchinitiative.hapiphenocore.phenopacket.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.monarchinitiative.hapiphenoclient.examples.PhenopacketPoster;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This class is intended to just do two simple operations with a FHIR server
- * as a sanity check
- */
 @Component
-public class PhenopacketDemoRunner {
+public class PhenopacketRunner {
+
     private final static Logger LOG = LoggerFactory.getLogger(PhenopacketDemoRunner.class);
     @Autowired
     private String hapiUrl;
 
     private final FhirContext ctx;
 
-    private PhenopacketPoster bethlem;
+    private PhenopacketPoster poster;
 
     private final LoggingInterceptor loggingInterceptor;
 
+    public void setPoster(PhenopacketPoster p) {
+        this.poster = p;
+    }
 
-    /**
-     * This variable represents the clinical case for which we are making a Phenopacket
-     * and translating it back to GA4GH format. Each case has clinical information and
-     * a Genomic Interpretation.
-     */
-     // TODO: cleanup
-    private PhenopacketPoster phenoExample = null;
-
-    public PhenopacketDemoRunner() {
+    public PhenopacketRunner() {
         ctx = FhirContext.forR4();
         String propFile = "classpath:narrative.properties";
         CustomThymeleafNarrativeGenerator gen = new CustomThymeleafNarrativeGenerator(propFile);
 
         ctx.setNarrativeGenerator(gen);
         loggingInterceptor = new LoggingInterceptor(true);
-    }
-
-    public void setPhenoExample(PhenopacketPoster example) {
-        this.phenoExample = example;
-    }
-
-
-
-
-    public Bundle searchForPatient(IIdType id) {
-        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        Bundle response = client.search()
-                .forResource(Patient.class)
-                .where(Resource.RES_ID.exactly().code(id.getIdPart()))
-                .returnBundle(Bundle.class)
-                .execute();
-        IParser parser = ctx.newJsonParser();
-        parser.setPrettyPrint(true);
-        System.out.println(parser.encodeResourceToString(response));
-        return response;
-    }
-
-
-    public Parameters searchForPhenopacketEverything(IIdType id) {
-        org.hl7.fhir.r4.model.DateType dtBeg = new DateType("2019-11-01");
-        org.hl7.fhir.r4.model.DateType dtEnd = new DateType("2023-02-02");
-        Parameters inParams = new Parameters();
-        {
-           inParams.addParameter().setName("start").setValue(dtBeg);
-           inParams.addParameter().setName("end").setValue(dtEnd);
-        }
-        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        Parameters outParams =  client.operation()
-                .onInstance(new IdDt("Composition", id.getIdPart()))
-                .named("$everything")
-                //.withNoParameters(Parameters.class) // No input parameters
-                .withParameters(inParams)
-                .useHttpGet() // Use HTTP GET instead of POST
-                .execute();
-        return outParams;
     }
 
     public Bundle searchForPhenopacketById(IIdType id) {
@@ -182,30 +113,11 @@ public class PhenopacketDemoRunner {
     }
 
 
-    public void searchByPatientId(IIdType id) {
-        IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        Bundle response = client.search()
-                .forResource(PhenotypicFeature.class)
-                .where(Patient.FAMILY.matches().value("Smith"))
-                .returnBundle(Bundle.class)
-                .execute();
-
-        System.out.println("Responses: " + response.getTotal());
-        if (response.getTotal() == 0) {
-            System.out.println("No reponses");
-        } else {
-            System.out.println("First response ID: " + response.getEntry().get(0).getResource().getId());
-        }
-    }
-
-
-
-
     public IIdType putResource(Resource resourceArg) {
         LOG.info("Putting resource={}", resourceArg);
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
-       // System.out.println(parser.encodeResourceToString(resourceArg));
+        // System.out.println(parser.encodeResourceToString(resourceArg));
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
 
         try {
@@ -229,14 +141,14 @@ public class PhenopacketDemoRunner {
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
 
-       System.out.println(parser.encodeResourceToString(resource));
+        System.out.println(parser.encodeResourceToString(resource));
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         try {
             MethodOutcome outcome = client
                     .create()
                     .resource(resource)
                     .execute();
-            Thread.sleep(5000);
+            Thread.sleep(1000);
             System.out.println("postResource() returned Id: " + outcome.getId());
             return outcome.getId();
         } catch (ResourceNotFoundException e) {
@@ -253,6 +165,9 @@ public class PhenopacketDemoRunner {
 
 
     private void postPractitioners() {
+        if (hapiUrl == null) {
+            hapiUrl = "http://20.119.216.32:9999/fhir";
+        }
         MyPractitioner williamHarvey = MyPractitioner.harvey();
         Practitioner practitioner = new Practitioner();
         practitioner.setId(williamHarvey.getId());
@@ -295,48 +210,47 @@ public class PhenopacketDemoRunner {
         }
     }
 
-
-    public PhenopacketPoster postBethlemClinicalExample() {
+    public PhenopacketPoster postPhenopacket() {
         System.out.println("\nPUT practitioners");
         postPractitioners();
         // Patient
         System.out.println("\nPOST patient");
-        BethlemMyopathyExample bethlem = new BethlemMyopathyExample();
-        IIdType individualId = postResource(bethlem.individual());
-        bethlem.setIndividualId(individualId);
+
+        IIdType individualId = postResource(poster.individual());
+        poster.setIndividualId(individualId);
 
 
         // Phenopacket
         System.out.println("\nPUT phenopacket/composition");
-        Phenopacket fhirPhenopacket = bethlem.phenopacket();
+        Phenopacket fhirPhenopacket = poster.phenopacket();
         IIdType phenopacketId = postResource(fhirPhenopacket);
         if (phenopacketId == null) {
             throw new PhenoClientRuntimeException("Could not retrieve Phenopacket ID from server");
         }
-        bethlem.setPhenopacketId(phenopacketId);
+        poster.setPhenopacketId(phenopacketId);
 
         // Features
-        List<PhenotypicFeature> phenotypicFeatureList = bethlem.phenotypicFeatureList();
-        /* Composition.SectionComponent phenotypicFeaturesSection =
+        List<PhenotypicFeature> phenotypicFeatureList = poster.phenotypicFeatureList();
+        Composition.SectionComponent phenotypicFeaturesSection =
                 new Composition.SectionComponent()
                         .setTitle("phenotypic_features")
                         .setCode(new CodeableConcept()
                                 .addCoding(new Coding()
-                                                .setCode("phenotypic_features")
-                                                .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
-        fhirPhenopacket.addSection(phenotypicFeaturesSection); */
+                                        .setCode("phenotypic_features")
+                                        .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
+        fhirPhenopacket.addSection(phenotypicFeaturesSection);
         int i=1;
         for (PhenotypicFeature pfeature : phenotypicFeatureList) {
             System.out.println("\nPOST observation PUT phenopacket/composition features " + i++);
             IIdType pfeatureId = postResource(pfeature);
             pfeature.setId(pfeatureId.getIdPart());
-            //phenotypicFeaturesSection.addEntry(new Reference(pfeature));
+            phenotypicFeaturesSection.addEntry(new Reference(pfeature));
             putResource(fhirPhenopacket);
         }
 
 
         // Measurements
-        List<Measurement> measurementList = bethlem.measurementList();
+        List<Measurement> measurementList = poster.measurementList();
         Composition.SectionComponent measurementSection =
                 new Composition.SectionComponent()
                         .setTitle("measurements")
@@ -357,21 +271,23 @@ public class PhenopacketDemoRunner {
 
 
 // TODO: cleanup
-        System.out.println("\n(TODO) POST variant");
-        PhenopacketsVariant variant = bethlem.createPhenopacketsVariant();
+       /* System.out.println("\n(TODO) POST variant");
+        PhenopacketsVariant variant = poster.createPhenopacketsVariant();
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
         System.out.println("\nShow local version of report on variant");
-
-
-
-        System.out.println("\nPhenopacketsVariant: " + parser.encodeResourceToString(variant));
+          System.out.println("\nPhenopacketsVariant: " + parser.encodeResourceToString(variant));
         IIdType variantId = postResource(variant);
 
-        PhenopacketsGenomicInterpretation genomicInterpretation = bethlem.addGenomicInterpretation(variant);
+        PhenopacketsGenomicInterpretation genomicInterpretation = poster.addGenomicInterpretation(variant);
         System.out.println(parser.encodeResourceToString(genomicInterpretation));
+        */
 
-        return bethlem;
+
+
+
+
+        return poster;
     }
 
 
@@ -415,32 +331,29 @@ public class PhenopacketDemoRunner {
         public List<PhenotypicFeature> getFeatures() { return features; }
         public List<Measurement> getMeasurements() {return measurements; }
     }
-    public void postToFhir() {
-        // Create and post Bethlem data to FHIR server
-        bethlem = postBethlemClinicalExample();
-    }
 
-    public FhirParts  retrieveFhirParts() {
+
+    public PhenopacketDemoRunner.FhirParts retrieveFhirParts() {
         // Retrieve packet (bundle, this is FHIR)from FHIR server
-        System.out.println("\nApp:Retrieving phenopacket " + bethlem.getPhenopacketId().getIdPart());
-        Bundle patientBundle = searchForPhenopacketById(bethlem.getPhenopacketId());
+        System.out.println("\nApp:Retrieving phenopacket " + poster.getPhenopacketId().getIdPart());
+        Bundle patientBundle = searchForPhenopacketById(poster.getPhenopacketId());
         System.out.println(patientBundle);
 
         System.out.println("*************************");
         System.out.println("\nApp:Fetch Individual from FHIR server"); //, xtract parts and create Phenopacket ");
-        Individual individual = extractIndividual(bethlem.getUnqualifiedIndividualId());
+        Individual individual = extractIndividual(poster.getUnqualifiedIndividualId());
         System.out.println("\nApp:Fetch Features from FHIR server"); //, xtract parts and create Phenopacket ");
         List<PhenotypicFeature> features = retrievePhenotypicFeaturesFromBundle(patientBundle);
         System.out.println("\nApp:Fetch Measurements from FHIR server"); //, xtract parts and create Phenopacket ");
         List<Measurement> measurements = retrieveMeasurementsFromBundle(patientBundle);
 
-        return(new FhirParts(patientBundle, individual, features, measurements));
+        return(new PhenopacketDemoRunner.FhirParts(patientBundle, individual, features, measurements));
     }
 
-    public org.phenopackets.schema.v2.Phenopacket assemblePhenopacket(FhirParts fhirParts) {
+    public org.phenopackets.schema.v2.Phenopacket assemblePhenopacket(PhenopacketDemoRunner.FhirParts fhirParts) {
         System.out.println("\nCreate phenopacket protobuf");
-        org.phenopackets.schema.v2.Phenopacket ga4ghPhenopacket = Ga4GhPhenopacket.fromFhir(fhirParts.getIndividual(), 
-                                            fhirParts.getFeatures(), fhirParts.getMeasurements() );
+        org.phenopackets.schema.v2.Phenopacket ga4ghPhenopacket = Ga4GhPhenopacket.fromFhir(fhirParts.getIndividual(),
+                fhirParts.getFeatures(), fhirParts.getMeasurements() );
         return ga4ghPhenopacket;
 
     }

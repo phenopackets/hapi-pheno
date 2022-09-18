@@ -15,7 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class BethlemMyopathyExample implements PhenoExample {
+public class BethlemMyopathyExample implements PhenopacketPoster {
 
     private final String phenopacketIdentifier = "phenopacket.1";
 
