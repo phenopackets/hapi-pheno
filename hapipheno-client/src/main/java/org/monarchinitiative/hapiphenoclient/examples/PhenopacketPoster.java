@@ -12,7 +12,7 @@ import java.util.List;
  * FHIR server.
  * @author Peter N Robinson
  */
-public interface PhenoExample {
+public interface PhenopacketPoster {
 
     Phenopacket phenopacket();
 

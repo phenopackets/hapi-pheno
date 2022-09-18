@@ -54,6 +54,12 @@ public class IndividualTransformer {
     }
 
     public static LocalDate convertToLocalDate(Date dateToConvert) {
+        // TODO what should we do if local date is null????
+        if (dateToConvert == null) {
+            ZoneId defaultZoneId = ZoneId.systemDefault();
+            Date date = Date.from(LocalDate.now().atStartOfDay(defaultZoneId).toInstant());
+            return date.toInstant().atZone(defaultZoneId).toLocalDate();
+        }
         return dateToConvert.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
