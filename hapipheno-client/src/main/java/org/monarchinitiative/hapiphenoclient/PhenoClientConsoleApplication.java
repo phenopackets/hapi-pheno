@@ -2,9 +2,9 @@ package org.monarchinitiative.hapiphenoclient;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
+import org.monarchinitiative.hapiphenoclient.analysis.FhirParts;
 import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner;
 
-import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner.FhirParts;
 
 import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketJsonFileRunner;
 import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketRunner;
@@ -32,6 +32,9 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
     @Autowired
     PhenopacketJsonFileRunner jsonFileRunner;
 
+    @Autowired
+    PhenopacketRunner runner;
+
 
 
     public static void main(String[] args) {
@@ -47,9 +50,9 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
         if (args.length == 1) {
             Path path = Paths.get(args[0]);
             jsonFileRunner.postJsonFile(path);
-            PhenopacketRunner runner = new PhenopacketRunner();
+
             runner.setPoster(jsonFileRunner);
-            runner.postPhenopacket();
+           // runner.postPhenopacket();
             FhirParts fhirParts = runner.retrieveFhirParts();
             org.phenopackets.schema.v2.Phenopacket ga4ghPhenopacket = runner.assemblePhenopacket(fhirParts);
 
@@ -62,7 +65,10 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
                 ipe.printStackTrace();
             }
         } else {
-            demoRunner.postToFhir();
+          /*
+           TODO REFACOTR DEMO RUNNER
+
+           demoRunner.postToFhir();
             FhirParts fhirParts = demoRunner.retrieveFhirParts();
             org.phenopackets.schema.v2.Phenopacket ga4ghPhenopacket = demoRunner.assemblePhenopacket(fhirParts);
 
@@ -73,7 +79,7 @@ public class PhenoClientConsoleApplication implements CommandLineRunner {
                 System.out.println(json);
             } catch (InvalidProtocolBufferException ipe) {
                 ipe.printStackTrace();
-            }
+            } */
         }
 
 

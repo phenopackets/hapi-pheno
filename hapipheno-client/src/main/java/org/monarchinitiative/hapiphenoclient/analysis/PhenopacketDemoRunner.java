@@ -38,6 +38,7 @@ import org.monarchinitiative.hapiphenocore.phenopacket.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import org.monarchinitiative.hapiphenoclient.examples.PhenopacketPoster;
@@ -52,7 +53,7 @@ import java.util.List;
 @Component
 public class PhenopacketDemoRunner {
     private final static Logger LOG = LoggerFactory.getLogger(PhenopacketDemoRunner.class);
-    @Autowired
+    @Value("${hapi.server}")
     private String hapiUrl;
 
     private final FhirContext ctx;
@@ -67,7 +68,7 @@ public class PhenopacketDemoRunner {
      * and translating it back to GA4GH format. Each case has clinical information and
      * a Genomic Interpretation.
      */
-     // TODO: cleanup
+    // TODO: cleanup
     private PhenopacketPoster phenoExample = null;
 
     public PhenopacketDemoRunner() {
@@ -82,8 +83,6 @@ public class PhenopacketDemoRunner {
     public void setPhenoExample(PhenopacketPoster example) {
         this.phenoExample = example;
     }
-
-
 
 
     public Bundle searchForPatient(IIdType id) {
@@ -105,11 +104,11 @@ public class PhenopacketDemoRunner {
         org.hl7.fhir.r4.model.DateType dtEnd = new DateType("2023-02-02");
         Parameters inParams = new Parameters();
         {
-           inParams.addParameter().setName("start").setValue(dtBeg);
-           inParams.addParameter().setName("end").setValue(dtEnd);
+            inParams.addParameter().setName("start").setValue(dtBeg);
+            inParams.addParameter().setName("end").setValue(dtEnd);
         }
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
-        Parameters outParams =  client.operation()
+        Parameters outParams = client.operation()
                 .onInstance(new IdDt("Composition", id.getIdPart()))
                 .named("$everything")
                 //.withNoParameters(Parameters.class) // No input parameters
@@ -199,13 +198,11 @@ public class PhenopacketDemoRunner {
     }
 
 
-
-
     public IIdType putResource(Resource resourceArg) {
         LOG.info("Putting resource={}", resourceArg);
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
-       // System.out.println(parser.encodeResourceToString(resourceArg));
+        // System.out.println(parser.encodeResourceToString(resourceArg));
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
 
         try {
@@ -229,7 +226,7 @@ public class PhenopacketDemoRunner {
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
 
-       System.out.println(parser.encodeResourceToString(resource));
+        System.out.println(parser.encodeResourceToString(resource));
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         try {
             MethodOutcome outcome = client
@@ -325,7 +322,7 @@ public class PhenopacketDemoRunner {
                                                 .setCode("phenotypic_features")
                                                 .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
         fhirPhenopacket.addSection(phenotypicFeaturesSection); */
-        int i=1;
+        int i = 1;
         for (PhenotypicFeature pfeature : phenotypicFeatureList) {
             System.out.println("\nPOST observation PUT phenopacket/composition features " + i++);
             IIdType pfeatureId = postResource(pfeature);
@@ -346,7 +343,7 @@ public class PhenopacketDemoRunner {
                                         .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
 
         fhirPhenopacket.addSection(measurementSection);
-        int j=1;
+        int j = 1;
         for (Measurement measurement : measurementList) {
             System.out.println("\nPOST measurement PUT phenopacket " + j++);
             IIdType measurementId = postResource(measurement);
@@ -364,7 +361,6 @@ public class PhenopacketDemoRunner {
         System.out.println("\nShow local version of report on variant");
 
 
-
         System.out.println("\nPhenopacketsVariant: " + parser.encodeResourceToString(variant));
         IIdType variantId = postResource(variant);
 
@@ -373,7 +369,6 @@ public class PhenopacketDemoRunner {
 
         return bethlem;
     }
-
 
 
 // TODO: fetch patients from FHIR and show? ...using extractIndividual function below?
@@ -388,36 +383,9 @@ public class PhenopacketDemoRunner {
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         Individual indi = client.read().resource(Individual.class).withId(individualId).execute();
         if (indi == null) {
-            throw new PhenoClientRuntimeException("Could not retrieve individual with id "+ individualId);
+            throw new PhenoClientRuntimeException("Could not retrieve individual with id " + individualId);
         }
         return indi;
-    }
-
-    public static class FhirParts {
-        // does java14 have some kind of struct/record for this? -- we are still at Java 11, rcords were Java 16
-        private final Bundle bundle;
-        private final Individual individual;
-        private final List<PhenotypicFeature> features;
-        private final List<Measurement> measurements;
-
-        public FhirParts(Bundle bundle,
-                         Individual individual,
-                         List<PhenotypicFeature> features,
-                         List<Measurement> measurements) {
-            this.bundle = bundle;
-            this.individual = individual;
-            this.features = features;
-            this.measurements = measurements;
-        }
-
-        public Bundle getBundle() { return bundle; }
-        public Individual getIndividual() { return individual; }
-        public List<PhenotypicFeature> getFeatures() { return features; }
-        public List<Measurement> getMeasurements() {return measurements; }
-    }
-    public void postToFhir() {
-        // Create and post Bethlem data to FHIR server
-        bethlem = postBethlemClinicalExample();
     }
 
     public FhirParts  retrieveFhirParts() {
@@ -439,8 +407,8 @@ public class PhenopacketDemoRunner {
 
     public org.phenopackets.schema.v2.Phenopacket assemblePhenopacket(FhirParts fhirParts) {
         System.out.println("\nCreate phenopacket protobuf");
-        org.phenopackets.schema.v2.Phenopacket ga4ghPhenopacket = Ga4GhPhenopacket.fromFhir(fhirParts.getIndividual(), 
-                                            fhirParts.getFeatures(), fhirParts.getMeasurements() );
+        org.phenopackets.schema.v2.Phenopacket ga4ghPhenopacket = Ga4GhPhenopacket.fromFhir(fhirParts.getIndividual(),
+                fhirParts.getFeatures(), fhirParts.getMeasurements() );
         return ga4ghPhenopacket;
 
     }

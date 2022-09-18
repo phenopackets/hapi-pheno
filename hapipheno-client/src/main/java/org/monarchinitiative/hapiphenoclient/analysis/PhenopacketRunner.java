@@ -18,6 +18,7 @@ import org.monarchinitiative.hapiphenocore.phenopacket.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -27,7 +28,8 @@ import java.util.List;
 public class PhenopacketRunner {
 
     private final static Logger LOG = LoggerFactory.getLogger(PhenopacketDemoRunner.class);
-    @Autowired
+
+    @Value("${hapi.server}")
     private String hapiUrl;
 
     private final FhirContext ctx;
@@ -50,6 +52,10 @@ public class PhenopacketRunner {
     }
 
     public Bundle searchForPhenopacketById(IIdType id) {
+        if (this.hapiUrl == null) {
+            System.err.println("hapi.url is null");
+           // System.exit(1);
+        }
         IGenericClient client = ctx.newRestfulGenericClient(this.hapiUrl);
         Bundle response = client.search()
                 .forResource(org.monarchinitiative.hapiphenocore.phenopacket.Phenopacket.class)
@@ -308,31 +314,7 @@ public class PhenopacketRunner {
         return indi;
     }
 
-    public static class FhirParts {
-        // does java14 have some kind of struct/record for this? -- we are still at Java 11, rcords were Java 16
-        private final Bundle bundle;
-        private final Individual individual;
-        private final List<PhenotypicFeature> features;
-        private final List<Measurement> measurements;
-
-        public FhirParts(Bundle bundle,
-                         Individual individual,
-                         List<PhenotypicFeature> features,
-                         List<Measurement> measurements) {
-            this.bundle = bundle;
-            this.individual = individual;
-            this.features = features;
-            this.measurements = measurements;
-        }
-
-        public Bundle getBundle() { return bundle; }
-        public Individual getIndividual() { return individual; }
-        public List<PhenotypicFeature> getFeatures() { return features; }
-        public List<Measurement> getMeasurements() {return measurements; }
-    }
-
-
-    public PhenopacketDemoRunner.FhirParts retrieveFhirParts() {
+    public FhirParts retrieveFhirParts() {
         // Retrieve packet (bundle, this is FHIR)from FHIR server
         System.out.println("\nApp:Retrieving phenopacket " + poster.getPhenopacketId().getIdPart());
         Bundle patientBundle = searchForPhenopacketById(poster.getPhenopacketId());
@@ -346,10 +328,10 @@ public class PhenopacketRunner {
         System.out.println("\nApp:Fetch Measurements from FHIR server"); //, xtract parts and create Phenopacket ");
         List<Measurement> measurements = retrieveMeasurementsFromBundle(patientBundle);
 
-        return(new PhenopacketDemoRunner.FhirParts(patientBundle, individual, features, measurements));
+        return(new FhirParts(patientBundle, individual, features, measurements));
     }
 
-    public org.phenopackets.schema.v2.Phenopacket assemblePhenopacket(PhenopacketDemoRunner.FhirParts fhirParts) {
+    public org.phenopackets.schema.v2.Phenopacket assemblePhenopacket(FhirParts fhirParts) {
         System.out.println("\nCreate phenopacket protobuf");
         org.phenopackets.schema.v2.Phenopacket ga4ghPhenopacket = Ga4GhPhenopacket.fromFhir(fhirParts.getIndividual(),
                 fhirParts.getFeatures(), fhirParts.getMeasurements() );

@@ -1,6 +1,7 @@
 package org.monarchinitiative.hapiphenocore.phenopacket;
 
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
+import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.utilities.xhtml.XhtmlNode;
 import org.monarchinitiative.hapiphenocore.except.PhenoClientRuntimeException;
@@ -36,6 +37,7 @@ public class Phenopacket extends Composition {
                 .setStatus(Narrative.NarrativeStatus.ADDITIONAL));
         addSection(measurementSection);
     }
+
 
     public void setIdentifier(String id) {
         setIdentifier(new Identifier().setValue(id));

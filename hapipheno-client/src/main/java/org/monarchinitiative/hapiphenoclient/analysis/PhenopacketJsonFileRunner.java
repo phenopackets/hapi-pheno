@@ -20,6 +20,7 @@ import org.phenopackets.schema.v2.Phenopacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -31,7 +32,7 @@ import java.util.List;
 @Component
 public class PhenopacketJsonFileRunner implements PhenopacketPoster  {
     private final static Logger LOG = LoggerFactory.getLogger(PhenopacketDemoRunner.class);
-    @Autowired
+    @Value("${hapi.server}")
     private String hapiUrl;
 
     private final FhirContext ctx;
@@ -68,22 +69,14 @@ public class PhenopacketJsonFileRunner implements PhenopacketPoster  {
         }
         var v2Phenopacket = builder.build();
         patient = IndividualToFhirPatient.convert(v2Phenopacket.getSubject());
-        IIdType individualId = postResource(patient);
-        setIndividualId(individualId);
+        IIdType indId = postResource(patient);
+        setIndividualId(indId);
+
         this.fhirPhenopacket
                 = new org.monarchinitiative.hapiphenocore.phenopacket.Phenopacket();
         this.fhirPhenopacket.setIdentifier(v2Phenopacket.getId());
         fhirPhenopacket.setIndividual(patient);
         phenotypicFeatureList = v2Phenopacket.getPhenotypicFeaturesList();
-        /*
-         for (PhenotypicFeature pfeature : phenotypicFeatureList) {
-            System.out.println("\nPOST observation PUT phenopacket/composition features " + i++);
-            IIdType pfeatureId = postResource(pfeature);
-            pfeature.setId(pfeatureId.getIdPart());
-            phenotypicFeaturesSection.addEntry(new Reference(pfeature));
-            putResource(fhirPhenopacket);
-        }
-         */
         for (var pf : v2Phenopacket.getPhenotypicFeaturesList()) {
             PhenotypicFeature fhirPhenoFeature = PhenotypicFeatureToObservation.convert(pf, individualId.getIdPart());
             IIdType phId = postResource(fhirPhenoFeature);
@@ -96,7 +89,9 @@ public class PhenopacketJsonFileRunner implements PhenopacketPoster  {
             IIdType measurementId = postResource(fhirMeasurement);
             fhirPhenopacket.addMeasurement(new Reference("Observation/" + measurementId.getIdPart()));
         }
-
+        IIdType phenopacketId = postResource(fhirPhenopacket);
+        fhirPhenopacket.setId(phenopacketId);
+        setPhenopacketId(phenopacketId);
     }
 
 
