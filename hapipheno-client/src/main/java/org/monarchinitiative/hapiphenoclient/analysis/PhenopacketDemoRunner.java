@@ -128,7 +128,7 @@ public class PhenopacketDemoRunner {
                 .execute();
         IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(true);
-        System.out.println(parser.encodeResourceToString(response));
+        //System.out.println(parser.encodeResourceToString(response));
         return response;
     }
 
@@ -213,7 +213,9 @@ public class PhenopacketDemoRunner {
                     .update()
                     .resource(resourceArg)
                     .execute();
-            System.out.println("putResource() returned Id:" + methodOutcome.getId());
+            //System.out.println("putResource() returned Id:" + methodOutcome.getId());
+            System.out.println(methodOutcome.getOperationOutcome());
+            System.out.println("============ OO");
             return methodOutcome.getId();
         } catch (Exception e) {
             String msg = String.format("Could not update resource: %s\n", e.getMessage());
@@ -234,6 +236,7 @@ public class PhenopacketDemoRunner {
                     .create()
                     .resource(resource)
                     .execute();
+            Thread.sleep(5000);
             System.out.println("postResource() returned Id: " + outcome.getId());
             return outcome.getId();
         } catch (ResourceNotFoundException e) {
@@ -242,6 +245,9 @@ public class PhenopacketDemoRunner {
             //int code = e.getStatusCode();
             String msg = String.format("Could not create resource (%s): %s\n", resource.toString(), e.getMessage());
             throw new PhenoClientRuntimeException(msg);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new PhenoClientRuntimeException("Bad sleep");
         }
     }
 
@@ -291,12 +297,8 @@ public class PhenopacketDemoRunner {
 
 
     public PhenoExample postBethlemClinicalExample() {
-
-        // Practioners
         System.out.println("\nPUT practitioners");
         postPractitioners();
-
-
         // Patient
         System.out.println("\nPOST patient");
         BethlemMyopathyExample bethlem = new BethlemMyopathyExample();

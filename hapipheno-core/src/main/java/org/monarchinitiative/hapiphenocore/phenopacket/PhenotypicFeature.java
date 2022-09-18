@@ -29,6 +29,8 @@ public class PhenotypicFeature extends Observation {
     private final static String valueCodeLoincAbsent = "LA9634-2";
     private final static String valueDisplayAbsent = "Absent";
 
+    private final static String HPO_CODESYSTEM_URI = "http://github.com/phenopackets/core-ig/CodeSystem/hpo";
+
 
     public static PhenotypicFeature createObservation(String hpoCode, String hpoLabel, String patId) {
         return (PhenotypicFeature) new PhenotypicFeature()
@@ -56,6 +58,53 @@ public class PhenotypicFeature extends Observation {
                         new Coding().setSystem(valueSystemLoinc)
                                 .setCode(valueCodeLoincAbsent)
                                 .setDisplay(valueDisplayAbsent)));
+    }
+
+    /**
+     * <component>
+     *     <code>
+     *       <coding>
+     *         <system value="http://github.com/phenopackets/core-ig/CodeSystem/hpo"/>
+     *         <code value="HP:0012828"/>
+     *         <display value="Severe"/>
+     *       </coding>
+     *     </code>
+     *     <valueBoolean value="true"/>
+     *   </component>
+     * @param severityId Ontology id for severity code
+     * @param severityLabel Ontology label for severity code
+     */
+    public void setSeverity(String severityId, String severityLabel) {
+        Coding severityCoding = new Coding().setSystem(HPO_CODESYSTEM_URI)
+                .setCode(severityId).setDisplay(severityLabel);
+        CodeableConcept severityCC = new CodeableConcept().addCoding(severityCoding);
+        ObservationComponentComponent occ = new ObservationComponentComponent();
+        occ.setValue(new BooleanType().setValue(true));
+        occ.setCode(severityCC);
+        this.addComponent(occ);
+    }
+
+    public void setHpoSevere() {
+        setSeverity("HP:0012828", "Severe");
+    }
+
+    public void setHpoModerate() {
+        setSeverity("HP:0012826", "Moderate");
+    }
+    public void setHpoMild() {
+        setSeverity("HP:0012825", "Mild");
+    }
+
+    public void setHpoBorderline() {
+        setSeverity( "HP:0012827", "Borderline");
+    }
+
+    public void setHpoProfound() {
+        setSeverity("HP:0012829", "Profound");
+    }
+
+    public void setOnset(int year, int month, int day){
+        setEffective(new DateType().setYear(year).setMonth(month).setDay(day));
     }
 
 
