@@ -68,7 +68,7 @@ public class BethlemMyopathyExample implements PhenopacketPoster {
     @Override
     public Phenopacket phenopacket() {
         this.phenopacket = new Phenopacket();
-        this.phenopacket.setIdentifier(new Identifier().setValue(phenopacketIdentifier)); // phenopacket.1
+        this.phenopacket.setIdentifier(phenopacketIdentifier);
         this.phenopacket.setIndividual(individual);
         this.phenopacket.setStatus(Composition.CompositionStatus.FINAL);
         this.phenopacket.setSubject(new Reference("Patient/" + getUnqualifiedIndividualId()));

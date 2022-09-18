@@ -10,7 +10,6 @@ import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
-import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 import org.monarchinitiative.hapiphenoclient.examples.PhenopacketPoster;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
 import org.monarchinitiative.hapiphenocore.except.PhenoClientRuntimeException;

@@ -1,6 +1,5 @@
 package org.monarchinitiative.hapiphenocore.ga4gh_to_fhir;
 
-import net.sf.saxon.expr.Component;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Quantity;

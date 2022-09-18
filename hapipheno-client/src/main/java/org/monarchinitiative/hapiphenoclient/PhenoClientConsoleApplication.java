@@ -2,7 +2,6 @@ package org.monarchinitiative.hapiphenoclient;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-import org.checkerframework.checker.units.qual.A;
 import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner;
 
 import org.monarchinitiative.hapiphenoclient.analysis.PhenopacketDemoRunner.FhirParts;

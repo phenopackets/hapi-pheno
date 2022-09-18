@@ -1,7 +1,6 @@
 package org.monarchinitiative.hapiphenocore.ga4gh_to_fhir;
 
 import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.Patient;
 import org.phenopackets.schema.v2.core.Individual;
 import org.phenopackets.schema.v2.core.Sex;
 
@@ -15,8 +14,8 @@ public class IndividualToFhirPatient {
      * * identifier MS
      * * gender MS
      * * birthDate MS
-     * @param ga4ghIndividual
-     * @return
+     * @param ga4ghIndividual the subject from the GA4GH Phenopacket
+     * @return corresponding FHIR Individual
      */
     public static org.monarchinitiative.hapiphenocore.phenopacket.Individual
         convert(Individual ga4ghIndividual) {

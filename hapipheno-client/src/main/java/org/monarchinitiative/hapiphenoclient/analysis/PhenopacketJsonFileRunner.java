@@ -5,7 +5,6 @@ import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import com.google.protobuf.util.JsonFormat;
 import org.hl7.fhir.instance.model.api.IIdType;
@@ -27,7 +26,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -74,6 +72,7 @@ public class PhenopacketJsonFileRunner implements PhenopacketPoster  {
         setIndividualId(individualId);
         this.fhirPhenopacket
                 = new org.monarchinitiative.hapiphenocore.phenopacket.Phenopacket();
+        this.fhirPhenopacket.setIdentifier(v2Phenopacket.getId());
         fhirPhenopacket.setIndividual(patient);
         phenotypicFeatureList = v2Phenopacket.getPhenotypicFeaturesList();
         /*
@@ -113,7 +112,7 @@ public class PhenopacketJsonFileRunner implements PhenopacketPoster  {
                     .create()
                     .resource(resource)
                     .execute();
-            Thread.sleep(1000);
+            //Thread.sleep(100);
             System.out.println("postResource() returned Id: " + outcome.getId());
             return outcome.getId();
         } catch (ResourceNotFoundException e) {
@@ -122,7 +121,7 @@ public class PhenopacketJsonFileRunner implements PhenopacketPoster  {
             //int code = e.getStatusCode();
             String msg = String.format("Could not create resource (%s): %s\n", resource.toString(), e.getMessage());
             throw new PhenoClientRuntimeException(msg);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new PhenoClientRuntimeException("Bad sleep");
         }

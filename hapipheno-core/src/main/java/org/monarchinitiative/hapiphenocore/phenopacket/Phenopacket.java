@@ -2,6 +2,7 @@ package org.monarchinitiative.hapiphenocore.phenopacket;
 
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.utilities.xhtml.XhtmlNode;
 import org.monarchinitiative.hapiphenocore.except.PhenoClientRuntimeException;
 
 import java.util.List;
@@ -10,8 +11,6 @@ import java.util.Optional;
 @ResourceDef(
         profile="https://github.com/phenopackets/core-ig/StructureDefinition/Phenopacket")
 public class Phenopacket extends Composition {
-
-    private String phenopacketId;
 
     private Reference subject;
 
@@ -32,8 +31,14 @@ public class Phenopacket extends Composition {
                                 .addCoding(new Coding()
                                         .setCode("measurements")
                                         .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
+        measurementSection.setText(new Narrative()
+                .setDiv(new XhtmlNode().setValue("?"))
+                .setStatus(Narrative.NarrativeStatus.ADDITIONAL));
         addSection(measurementSection);
+    }
 
+    public void setIdentifier(String id) {
+        setIdentifier(new Identifier().setValue(id));
     }
 
 
