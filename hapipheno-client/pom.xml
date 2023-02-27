@@ -125,7 +125,7 @@
                             <goal>repackage</goal>
                         </goals>
                         <configuration>
-                            <mainClass>org.monarchinitiative.hapiphenoclient.PhenoClientConsoleApplication</mainClass>
+                            <mainClass>org.phenopackets.hapipheno.client.PhenoClientConsoleApplication</mainClass>
                         </configuration>
                     </execution>
                 </executions>
