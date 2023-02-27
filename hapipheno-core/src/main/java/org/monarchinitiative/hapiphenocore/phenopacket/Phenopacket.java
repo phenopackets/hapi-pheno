@@ -1,9 +1,9 @@
 package org.monarchinitiative.hapiphenocore.phenopacket;
 
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
-import org.hl7.fhir.r4.model.Composition;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.utilities.xhtml.XhtmlNode;
 import org.monarchinitiative.hapiphenocore.except.PhenoClientRuntimeException;
 
 import java.util.List;
@@ -13,12 +13,34 @@ import java.util.Optional;
         profile="https://github.com/phenopackets/core-ig/StructureDefinition/Phenopacket")
 public class Phenopacket extends Composition {
 
-    private String phenopacketId;
-
     private Reference subject;
 
 
     public Phenopacket() {
+        Composition.SectionComponent phenotypicFeaturesSection =
+                new Composition.SectionComponent()
+                        .setTitle("phenotypic_features")
+                        .setCode(new CodeableConcept()
+                                .addCoding(new Coding()
+                                        .setCode("phenotypic_features")
+                                        .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
+        addSection(phenotypicFeaturesSection);
+        Composition.SectionComponent measurementSection =
+                new Composition.SectionComponent()
+                        .setTitle("measurements")
+                        .setCode(new CodeableConcept()
+                                .addCoding(new Coding()
+                                        .setCode("measurements")
+                                        .setSystem("http://ga4gh.org/fhir/phenopackets/CodeSystem/SectionType")));
+        measurementSection.setText(new Narrative()
+                .setDiv(new XhtmlNode().setValue("?"))
+                .setStatus(Narrative.NarrativeStatus.ADDITIONAL));
+        addSection(measurementSection);
+    }
+
+
+    public void setIdentifier(String id) {
+        setIdentifier(new Identifier().setValue(id));
     }
 
 
@@ -57,16 +79,29 @@ public class Phenopacket extends Composition {
         return List.of();
     }
 
-    public void addPhenotypicFeature(PhenotypicFeature pfeature) {
+    public void addPhenotypicFeature(Reference pfeatureReference) {
         List<SectionComponent> sections = getSection();
         Optional<SectionComponent> opt =
                 sections.stream().filter(sc -> sc.getCode().getCodingFirstRep().getCode().equals("phenotypic_features"))
                         .findAny();
         if (opt.isPresent()) {
             SectionComponent phenoFeatureSectionComponent = opt.get();
-            phenoFeatureSectionComponent.getEntry().add(new Reference(pfeature));
+            phenoFeatureSectionComponent.getEntry().add(pfeatureReference);
         } else {
             throw new PhenoClientRuntimeException("Could not get list of phenotypic_features");
+        }
+    }
+
+    public void addMeasurement(Reference measurementReference) {
+        List<SectionComponent> sections = getSection();
+        Optional<SectionComponent> opt =
+                sections.stream().filter(sc -> sc.getCode().getCodingFirstRep().getCode().equals("measurements"))
+                        .findAny();
+        if (opt.isPresent()) {
+            SectionComponent phenoFeatureSectionComponent = opt.get();
+            phenoFeatureSectionComponent.getEntry().add(measurementReference);
+        } else {
+            throw new PhenoClientRuntimeException("Could not get list of measurements");
         }
     }
 
