@@ -1,7 +1,7 @@
 # From  https://github.com/ShahimEssaid/examples/blob/10d56d65b36b95f97e008ca8583ebbe24821908c/.github/workflows/maven.java-jar.build.yaml
 
-name: hapipheno core deploy
-run-name: Running maven.java-jar.build
+name: hapipheno mvn deploy
+run-name: Running hapipheno mvn deploy
 on:
   # The following job is only meant for push requests, i.e. trusted code in a branch in this repository.
   # This workflow can't work for building pull requests since it requires repository secrets.
@@ -10,7 +10,7 @@ on:
   # If a pull request needs to be deployed, create a branch to track the PR's branch to trigger a deployment.
   push:         # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushbranchestagsbranches-ignoretags-ignore
     paths:      # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore
-      - 'hapipheno-core/**'
+      - '**'
 
 jobs:
   build:
@@ -18,14 +18,14 @@ jobs:
     runs-on: ubuntu-22.04
     env:
 
-      MVN_PROJECT_REL_PATH: "hapipheno-core"
+      MVN_PROJECT_REL_PATH: "."
 
       DEPLOY_BRANCHES: ',main,master,'  # Commas are needed to force full branch name matching below.
       DEPLOY_BRANCH_SUFFIX: '-deploy'   # Branch names ending with this suffix will be deployed
       DEPLOY_COMMAND: 'mvn --no-transfer-progress deploy'
 
       BRANCH_QUALIFY_VERSION: true
-      BRANCH_NO_QUALIFY: ',,'                # The default branch of the remote is not qualified.
+      BRANCH_NO_QUALIFY: ',main,'                # The default branch of the remote is not qualified.
       BRANCH_QUALIFY_SNAPSHOT: true              # Force -SNAPSHOT on the version if needed
       BRANCH_QUALIFY_COMMAND: 'mvn --no-transfer-progress versions:set -DprocessAllModules'   # -DnewVersion=${BRANCH_VERSION_NEW} will be appended to this value
     steps:
