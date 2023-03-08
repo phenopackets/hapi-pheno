@@ -1,0 +1,116 @@
+# From  https://github.com/ShahimEssaid/examples/blob/10d56d65b36b95f97e008ca8583ebbe24821908c/.github/workflows/maven.java-jar.build.yaml
+
+name: hapipheno core deploy
+run-name: Running maven.java-jar.build
+on:
+  # The following job is only meant for push requests, i.e. trusted code in a branch in this repository.
+  # This workflow can't work for building pull requests since it requires repository secrets.
+  # See: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_target
+  # See: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+  # If a pull request needs to be deployed, create a branch to track the PR's branch to trigger a deployment.
+  push:         # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushbranchestagsbranches-ignoretags-ignore
+    paths:      # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore
+      - 'hapipheno-core/**'
+
+jobs:
+  build:
+    name: Build and optionally deploy
+    runs-on: ubuntu-22.04
+    env:
+
+      MVN_PROJECT_REL_PATH: "hapipheno-core"
+
+      DEPLOY_BRANCHES: ',main,master,'  # Commas are needed to force full branch name matching below.
+      DEPLOY_BRANCH_SUFFIX: '-deploy'   # Branch names ending with this suffix will be deployed
+      DEPLOY_COMMAND: 'mvn --no-transfer-progress deploy'
+
+      BRANCH_QUALIFY_VERSION: true
+      BRANCH_NO_QUALIFY: ',,'                # The default branch of the remote is not qualified.
+      BRANCH_QUALIFY_SNAPSHOT: true              # Force -SNAPSHOT on the version if needed
+      BRANCH_QUALIFY_COMMAND: 'mvn --no-transfer-progress versions:set -DprocessAllModules'   # -DnewVersion=${BRANCH_VERSION_NEW} will be appended to this value
+    steps:
+      - id: checkout
+        uses: actions/checkout@v3
+
+      - id: setup-java
+        uses: actions/setup-java@v3
+        with:  # https://github.com/actions/setup-java#user-content-usage
+          java-version: '17'
+          distribution: 'temurin'
+          server-id: 'oss'
+          server-username: OSS_USERNAME
+          server-password: OSS_PASSWORD
+          gpg-passphrase: GPG_PASSPHRASE
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}  # https://unix.stackexchange.com/questions/481939/how-to-export-a-gpg-private-key-and-public-key-to-a-file#482559
+
+      - id: debug-info
+        name: Debugging info
+        run: |
+          cat .git/config
+          echo "Git default remote branch: $(git remote show origin | sed -n '/HEAD branch/s/.*: //p')"
+          cat ~/.m2/settings.xml
+          echo "Some random secret that does not exist /${{ secrets.FOO }}/"
+          echo "Some random env that does not exist /${{ env.FOO }}/"
+          echo "github context:"
+          echo "${{ toJSON(github) }}"
+
+      - id: qualify-version
+        name: Qualify version if needed
+        run: |
+          set -x
+          
+          cd ${{ env.MVN_PROJECT_REL_PATH }}
+          
+          # if BRANCH_QUALIFY_VERSION is false return 0
+          if [[ ${{ env.BRANCH_QUALIFY_VERSION }} == true ]]; then
+            echo "Branch version qualifying is ENABLED, possibly qualifying it..." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Branch version qualifying is DISABLED, not qualifying version." >> $GITHUB_STEP_SUMMARY
+            return 0
+          fi
+          
+          # if this branch is in BRANCH_NO_QUALIFY return 0
+          if [[  ${{ contains( format(',{0},', env.BRANCH_NO_QUALIFY) , github.ref_name ) }} == true ]]; then
+            echo "Branch ${{ github.ref_name }} is IN the value of BRANCH_NO_QUALIFY: ${{ env.BRANCH_NO_QUALIFY }}, not qualifying its version." >> $GITHUB_STEP_SUMMARY
+            exit 0
+          else
+            echo "Branch ${{ github.ref_name }} is NOT IN the value of BRANCH_NO_QUALIFY: ${{ env.BRANCH_NO_QUALIFY }}, possibly qualifying it..." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # if this branch is not in  DEPLOY_BRANCHES AND not suffixed with DEPLOY_BRANCH_SUFFIX return 0
+          if [[  ${{ contains( env.DEPLOY_BRANCHES, format(',{0},', github.ref_name) ) }} != true 
+                && ${{ endsWith(github.ref_name, env.DEPLOY_BRANCH_SUFFIX ) }} != true ]]; then
+            echo "Branch ${{ github.ref_name }} is NOT IN deploy branches value: ${{ env.DEPLOY_BRANCHES}} AND not suffixed with ${{ env.DEPLOY_BRANCH_SUFFIX }}, not qualifying version." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Branch ${{ github.ref_name }} is IN deploy branches value: ${{ env.DEPLOY_BRANCHES}} OR suffixed with ${{ env.DEPLOY_BRANCH_SUFFIX }}, qualifying version..." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Get branch name and current version
+          BRANCH_NAME="${{ github.ref_name }}"
+          BRANCH_NAME="${BRANCH_NAME//[^a-zA-Z._-]/_}"
+          BRANCH_VERSION="$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+          
+          if [[ ${BRANCH_VERSION} == *-SNAPSHOT ]]; then
+            BRANCH_VERSION_NEW="${BRANCH_VERSION%-SNAPSHOT}-${BRANCH_NAME}-SNAPSHOT"
+          else
+            BRANCH_VERSION_NEW="${BRANCH_VERSION}-${BRANCH_NAME}"
+            if [[ ${BRANCH_QUALIFY_SNAPSHOT} == true ]]; then
+                BRANCH_VERSION_NEW="${BRANCH_VERSION_NEW}-SNAPSHOT"
+            fi
+          fi
+          
+          ${{ env.BRANCH_QUALIFY_COMMAND }} -DnewVersion=${BRANCH_VERSION_NEW}
+          
+          echo "Versions changed from ${BRANCH_VERSION} to ${BRANCH_VERSION_NEW} " >> $GITHUB_STEP_SUMMARY
+
+      - id: maven-deploy
+        name: Maven deploy
+        env:
+          OSS_USERNAME: ${{ secrets.OSS_USERNAME }}  # Can be your actual login name, or from an Access User Token if your repository provides one.
+          OSS_PASSWORD: ${{ secrets.OSS_PASSWORD }}  # Can be your actual login password, or from an Access User Token if your repository provides one.
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}  # the password for the GPG key above
+        run: |
+          cd ${{ env.MVN_PROJECT_REL_PATH }}
+          ${{ env.DEPLOY_COMMAND }}
+
+

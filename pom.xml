@@ -27,7 +27,6 @@
     <artifactId>hapi-pheno</artifactId>
     <version>0.4.1</version>
 
-
     <properties>
         <java.version>11</java.version>
         <spring_boot_version>2.3.4.RELEASE</spring_boot_version>
@@ -36,6 +35,13 @@
         <phenopacket.schema.version>2.0.2</phenopacket.schema.version>
         <springboot.starter.version>2.7.2</springboot.starter.version>
     </properties>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>oss</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <licenses>
         <license>
