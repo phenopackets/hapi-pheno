@@ -26,8 +26,9 @@ import org.hl7.fhir.instance.model.api.IIdType;
 
 import org.monarchinitiative.hapiphenoclient.examples.BethlemMyopathyExample;
 
-import org.monarchinitiative.hapiphenocore.except.PhenoClientRuntimeException;
 import org.monarchinitiative.hapiphenoclient.fhir.util.MyPractitioner;
+import org.monarchinitiative.hapiphenocore.except.PhenoClientRuntimeException;
+
 import org.monarchinitiative.hapiphenocore.fhir_to_ga4gh.Ga4GhPhenopacket;
 
 // Both used here, but package is explicitly mentioned to distinguish them
