@@ -21,16 +21,16 @@
         <module>hapipheno-client</module>
         <module>hapipheno-core</module>
     </modules>
-    <packaging>pom</packaging>
 
-    <groupId>org.monarchinitiative.hapipheno</groupId>
-    <artifactId>hapi-pheno</artifactId>
-    <version>0.4.1</version>
+    <groupId>com.essaid.org.monarchinitiative.hapipheno</groupId>
+    <artifactId>hapipheno</artifactId>
+    <version>0.4.2-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <properties>
         <java.version>11</java.version>
         <spring_boot_version>2.3.4.RELEASE</spring_boot_version>
-        <hapi.version>6.1.0</hapi.version>
+        <hapi.version>6.4.1</hapi.version>
         <protobuf.version>3.16.1</protobuf.version>
         <phenopacket.schema.version>2.0.2</phenopacket.schema.version>
         <springboot.starter.version>2.7.2</springboot.starter.version>

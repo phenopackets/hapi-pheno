@@ -12,28 +12,18 @@
     if you are using this file as a basis for your own project.
     -->
     <parent>
-        <groupId>org.monarchinitiative.hapipheno</groupId>
-        <artifactId>hapi-pheno</artifactId>
-        <version>0.4.1</version>
+        <groupId>com.essaid.org.monarchinitiative.hapipheno</groupId>
+        <artifactId>hapipheno</artifactId>
+        <version>0.4.2-SNAPSHOT</version>
     </parent>
 
-
     <artifactId>hapipheno-client</artifactId>
-    <version>0.4.1</version>
-    <packaging>jar</packaging>
-    <properties>
-        <java.version>11</java.version>
-        <spring_boot_version>2.3.4.RELEASE</spring_boot_version>
-        <hapi.version>5.6.2</hapi.version>
-        <protobuf.version>3.16.1</protobuf.version>
-    </properties>
-
 
     <dependencies>
         <dependency>
-            <groupId>org.monarchinitiative.hapipheno</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>hapipheno-core</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <!-- This dependency includes the core HAPI-FHIR classes -->
         <dependency>
