@@ -148,15 +148,30 @@
                 <filtering>false</filtering>
             </resource>
         </resources>
-       <plugins>
+        <plugins>
 
-              <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-failsafe-plugin</artifactId>
-                  <version>3.0.0-M5</version>
-                  <executions>
-                      <!-- Invokes both the integration-test and the verify goals of the Failsafe Maven
-                          plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <executions>
+                    <!-- Invokes both the integration-test and the verify goals of the Failsafe Maven
+                        plugin -->
                     <execution>
                         <id>integration-tests</id>
                         <goals>
