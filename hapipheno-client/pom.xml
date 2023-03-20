@@ -12,8 +12,8 @@
     if you are using this file as a basis for your own project.
     -->
     <parent>
-        <groupId>com.essaid.org.monarchinitiative.hapipheno</groupId>
-        <artifactId>hapipheno</artifactId>
+        <groupId>org.phenopackets.hapipheno</groupId>
+        <artifactId>parent</artifactId>
         <version>0.4.2-SNAPSHOT</version>
     </parent>
 
