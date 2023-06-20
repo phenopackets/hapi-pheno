@@ -72,6 +72,12 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.phenopackets.phenopackettools</groupId>
+            <artifactId>phenopacket-tools-converter</artifactId>
+            <version>1.0.0-RC3</version>
+        </dependency>
+
         <!-- HAPI-FHIR uses Logback for logging support. The logback library is included automatically by
         Maven as a part of the hapi-fhir-base dependency, but you also need to include a logging library. Logback
             is used here, but log4j would also be fine.
