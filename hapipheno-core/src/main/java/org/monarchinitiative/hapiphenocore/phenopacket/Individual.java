@@ -22,6 +22,15 @@ public class Individual extends Patient {
     }
 
     public void setKaryotypicSex(String karyotype) {
+
+        org.hl7.fhir.r4.model.Extension extension1 = addExtension();
+        extension1.setUrl("https://github.com/phenopackets/core-ig/StructureDefinition/KaryotypicSex");
+        CodeableConcept cc = new CodeableConcept();
+        Coding coding = cc.addCoding();
+        coding.setCode(karyotype);
+        coding.setSystem("https://github.com/phenopackets/core-ig/CodeSystem/KaryotypicSex");
+        extension1.setValue(cc);
+
         if (karyotypicSex == null) {
             karyotypicSex = new KaryotypicSex();
         }
