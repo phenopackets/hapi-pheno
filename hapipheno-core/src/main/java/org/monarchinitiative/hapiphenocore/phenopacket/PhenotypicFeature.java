@@ -19,6 +19,7 @@ import org.hl7.fhir.r4.model.*;
  */
 @ResourceDef(
         profile="https://github.com/phenopackets/core-ig/StructureDefinition/PhenotypicFeature")
+// TODO -- module structure with r4 (like HAPI) and rename to FhirPhenotypicFeature
 public class PhenotypicFeature extends Observation {
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +32,7 @@ public class PhenotypicFeature extends Observation {
 
     private final static String HPO_CODESYSTEM_URI = "http://github.com/phenopackets/core-ig/CodeSystem/hpo";
 
-
+// Ga4ghPhenotypicFeature -- with wrappers
     public static PhenotypicFeature createObservation(String hpoCode, String hpoLabel, String patId) {
         return (PhenotypicFeature) new PhenotypicFeature()
                 .setStatus(ObservationStatus.FINAL)

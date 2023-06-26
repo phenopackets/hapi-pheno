@@ -50,6 +50,7 @@ public class PhenotypicFeatureToObservation {
             OntologyClass severity = pf.getSeverity();
             String severityId = severity.getId();
             String severityLabel = severity.getLabel();
+            fhirPhenotypicFeature.setSeverity(severityId, severityLabel);
         }
         // check for clinical modifiers
         // check for age of onset
