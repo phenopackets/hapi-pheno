@@ -1,4 +1,5 @@
 package org.monarchinitiative.hapiphenocore.phenopacket;
+import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import org.hl7.fhir.r4.model.*;
 
@@ -104,7 +105,9 @@ public class PhenotypicFeature extends Observation {
     }
 
     public void setOnset(int year, int month, int day){
-        setEffective(new DateType().setYear(year).setMonth(month).setDay(day));
+        DateTimeType onset = new DateTimeType();
+        onset.setPrecision(TemporalPrecisionEnum.DAY);
+        setEffective(onset.setYear(year).setMonth(month).setDay(day));
     }
 
 
