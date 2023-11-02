@@ -80,6 +80,11 @@
             <version>5.7.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.essaid.model</groupId>
+            <artifactId>com.essaid.model.api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
     </dependencies>
 

@@ -1,5 +1,6 @@
 package org.monarchinitiative.hapiphenocore.ga4gh_to_fhir;
 
+import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Observation.ObservationStatus;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
