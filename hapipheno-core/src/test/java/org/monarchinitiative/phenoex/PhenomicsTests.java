@@ -69,8 +69,8 @@ public class PhenomicsTests {
 
     // Set up the interface model and the converter (visitor)
     EntityManager entityManager = Configs.getDefaultMapEntityManager();
-    V2ToModel v2ToModel = new V2ToModel(entityManager);
-    v2ToModel.getPrefixMap().put("HP", "http://HP");
+//    V2ToModel v2ToModel = new V2ToModel(entityManager);
+//    v2ToModel.getPrefixMap().put("HP", "http://HP");
 
     Phenotype phenotype = entityManager.create(Phenotype.class);
     phenotype.addCodings().csetCode("SomeCode").csetDisplay("Some display")

@@ -1,0 +1,29 @@
+import java.util.List;
+
+package org.monarchinitiative.phenoex.model {
+
+  /* PhenomicsExchangePacket */
+  entity PhenomicsExchangePacket {
+
+    /* The Phenotypes */
+    phenotypes: List<Phenotype>
+  }
+
+  /* Coding */
+  entity Coding {
+    /* The code. */
+    code: String
+
+    /* The display */
+    display: String
+
+    /* The system */
+    system: String
+  }
+
+  /* Phenotype */
+  entity Phenotype {
+    codings: List<Coding>
+  }
+
+}

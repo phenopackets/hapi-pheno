@@ -13,21 +13,14 @@ import org.monarchinitiative.phenoex.model.Phenotype;
 
 public class ToR4Bundle implements ToR4Resource  {
   private final HTTPVerb method;
-  private final Bundle bundle = new Bundle();
+
 
   @Builder
   public ToR4Bundle(HTTPVerb method, BundleType type) {
     this.method = method;
-    bundle.setType(type);
   }
 
 
-  public Bundle visit(PhenomicsExchangePacket packet){
-    for(Phenotype phenotype: packet.cgetPhenotypes()){
-      Observation o = visit(phenotype);
-      bundle.addEntry().setResource(o);
-    }
-    return bundle;
-  }
+
 
 }
