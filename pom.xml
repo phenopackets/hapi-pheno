@@ -36,6 +36,16 @@
         <springboot.starter.version>2.7.2</springboot.starter.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>oss</id>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <snapshotRepository>
             <id>oss</id>
