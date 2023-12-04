@@ -50,7 +50,7 @@ public class PhenomicsTests {
     }
 
     // Set up the interface model and the converter (visitor)
-    EntityManager entityManager = Configs.getDefaultMapEntityManager();
+    EntityManager entityManager = Configs.createDefaultMapEntityManager();
     V2ToModel v2ToModel = new V2ToModel(entityManager);
     v2ToModel.getPrefixMap().put("HP", "http://HP");
     PhenomicsExchangePacket phenomicsPacket = v2ToModel.visit(phenopacket);
@@ -68,7 +68,7 @@ public class PhenomicsTests {
   void createPhenotype() throws IOException {
 
     // Set up the interface model and the converter (visitor)
-    EntityManager entityManager = Configs.getDefaultMapEntityManager();
+    EntityManager entityManager = Configs.createDefaultMapEntityManager();
 //    V2ToModel v2ToModel = new V2ToModel(entityManager);
 //    v2ToModel.getPrefixMap().put("HP", "http://HP");
 

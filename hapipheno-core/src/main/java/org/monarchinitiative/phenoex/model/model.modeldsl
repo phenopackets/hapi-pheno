@@ -1,16 +1,18 @@
 import java.util.List;
+import org.monarchinitiative.phenoex.model.base.Element;
+
 
 package org.monarchinitiative.phenoex.model {
 
   /* PhenomicsExchangePacket */
-  entity PhenomicsExchangePacket {
+  entity PhenomicsExchangePacket extends Element {
 
     /* The Phenotypes */
     phenotypes: List<Phenotype>
   }
 
   /* Coding */
-  entity Coding {
+  entity Coding extends Element {
     /* The code. */
     code: String
 
@@ -22,8 +24,24 @@ package org.monarchinitiative.phenoex.model {
   }
 
   /* Phenotype */
-  entity Phenotype {
+  entity Phenotype extends Element {
     codings: List<Coding>
   }
 
+}
+
+package org.monarchinitiative.phenoex.model.base {
+
+  entity Element {
+    extensions: List<Extension>
+  }
+
+  entity Extension extends Element {
+    key: String
+    valueString: String
+  }
+
+  entity StringElement extends Element {
+    value: String
+  }
 }

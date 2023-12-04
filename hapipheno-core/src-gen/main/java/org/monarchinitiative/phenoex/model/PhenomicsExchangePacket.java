@@ -1,12 +1,13 @@
 package org.monarchinitiative.phenoex.model;
 
 import java.util.List;
+import org.monarchinitiative.phenoex.model.base.Element;
 
 /**
  * PhenomicsExchangePacket
  */
 @SuppressWarnings("all")
-public interface PhenomicsExchangePacket {
+public interface PhenomicsExchangePacket extends Element {
   /**
    * The Phenotypes
    */
@@ -16,6 +17,16 @@ public interface PhenomicsExchangePacket {
    * The Phenotypes
    */
   void setPhenotypes(final List<Phenotype> phenotypes);
+
+  /**
+   * The Phenotypes
+   */
+  List<Phenotype> getOrDefaultPhenotypes(final List<Phenotype> defaultValue);
+
+  /**
+   * The Phenotypes
+   */
+  List<Phenotype> getOrSetPhenotypes(final List<Phenotype> setValue);
 
   /**
    * The Phenotypes
