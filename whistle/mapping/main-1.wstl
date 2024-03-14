@@ -1,0 +1,3 @@
+import "./demo/demo-1.wstl"
+
+demo::demo_1()
